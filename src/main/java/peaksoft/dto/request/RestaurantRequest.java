@@ -1,2 +1,11 @@
-package peaksoft.dto.request;public record RestaurantRequest() {
+package peaksoft.dto.request;
+
+import lombok.Builder;
+
+@Builder
+public record RestaurantRequest(String name,
+                                String location,
+                                String restType,
+                                int numberOfEmployee,
+                                int service) {
 }

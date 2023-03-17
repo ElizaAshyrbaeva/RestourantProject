@@ -1,4 +1,8 @@
 package peaksoft.repository;
 
-public interface MenultemRepository extends org.springframework.data.jpa.repository.JpaRepository<peaksoft.entity.Menultem, java.lang.Long> {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import peaksoft.entity.Menultem;
+@Repository
+public interface MenultemRepository extends JpaRepository<Menultem, Long> {
 }

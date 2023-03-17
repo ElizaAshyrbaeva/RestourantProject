@@ -1,4 +1,13 @@
 package peaksoft.repository;
 
-public interface UserRepository extends org.springframework.data.jpa.repository.JpaRepository<peaksoft.entity.User, java.lang.Long> {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import peaksoft.entity.User;
+
+import java.util.Optional;
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByEmail(String email);
+
+    boolean existsByEmail(String email);
 }

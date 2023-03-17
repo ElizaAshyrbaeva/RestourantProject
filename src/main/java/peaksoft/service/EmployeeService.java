@@ -1,2 +1,14 @@
-package peaksoft.service;public interface EmployeeService {
+package peaksoft.service;
+import peaksoft.dto.request.EmployeeRequest;
+import peaksoft.dto.response.EmployeeResponse;
+import peaksoft.dto.response.SimpleResponse;
+import java.util.List;
+public interface EmployeeService {
+    SimpleResponse saveEmployee(EmployeeRequest employeeRequest);
+    List <EmployeeResponse>getAll();
+    EmployeeResponse findById(Long id);
+    SimpleResponse deleteById(Long id);
+    SimpleResponse update(Long id,EmployeeRequest request);
+
+
 }

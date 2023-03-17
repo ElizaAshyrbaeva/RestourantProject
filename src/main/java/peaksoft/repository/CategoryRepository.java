@@ -1,4 +1,8 @@
 package peaksoft.repository;
 
-public interface CategoryRepository extends org.springframework.data.jpa.repository.JpaRepository<peaksoft.entity.Category, java.lang.Long> {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import peaksoft.entity.Category;
+@Repository
+public interface CategoryRepository extends JpaRepository<Category, Long> {
 }
