@@ -1,8 +1,13 @@
 package peaksoft.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,7 +20,7 @@ public class Category {
     private Long id;
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Subcategory subcategory;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,mappedBy = "categories")
+    private Set<SubCategory> subcategory = new LinkedHashSet<>();
 
 }

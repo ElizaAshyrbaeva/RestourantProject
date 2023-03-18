@@ -3,6 +3,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import peaksoft.dto.request.EmployeeRequest;
+import peaksoft.dto.request.EmployeeRequestToken;
 import peaksoft.dto.response.EmployeeResponse;
 import peaksoft.dto.response.SimpleResponse;
 import peaksoft.entity.Employee;
@@ -10,6 +11,8 @@ import peaksoft.enums.Role;
 import peaksoft.repository.EmployeeRepository;
 import peaksoft.service.EmployeeService;
 import java.util.List;
+import java.util.NoSuchElementException;
+
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository repository;
@@ -32,7 +35,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setRole(Role.WAITER);
         employee.setExperience(request.experience());
         repository.save(employee);
-        return SimpleResponse.builder().status(HttpStatus.OK).massage("Successfully saved"+" "+request.lastName()).build();
+        return SimpleResponse.builder().status(HttpStatus.OK).
+                massage("Successfully saved"+" "+request.lastName()).build();
+    }
+
+    @Override
+    public SimpleResponse saveUser(EmployeeRequestToken token) {
+        Employee employee = new Employee();
+        employee.setEmail(token.email());
+        return null;
     }
 
     @Override
@@ -42,7 +53,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeResponse findById(Long id) {
-         return repository.findByIdEmpl(id);
+         return repository.findByIdEmpl(id).orElseThrow(()->new NoSuchElementException(String.format("User with email: %s doesn't exists")));
     }
 
     @Override
@@ -63,4 +74,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setExperience(request.experience());
         return SimpleResponse.builder().status(HttpStatus.OK).massage("Successfully update.").build();
     }
+
+
 }

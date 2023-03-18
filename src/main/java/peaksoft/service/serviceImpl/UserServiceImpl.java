@@ -6,10 +6,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import peaksoft.config.jwt.JwtService;
+import peaksoft.dto.request.EmployeeRequestToken;
 import peaksoft.dto.request.UserRequest;
+import peaksoft.dto.response.EmployeeResponseToken;
 import peaksoft.dto.response.UserResponse;
+import peaksoft.entity.Employee;
 import peaksoft.entity.User;
 import peaksoft.enums.Role;
+import peaksoft.repository.EmployeeRepository;
 import peaksoft.repository.UserRepository;
 import peaksoft.service.UserService;
 
@@ -21,12 +25,14 @@ public class UserServiceImpl implements UserService {
     private final JwtService jwtService;
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
+    private final EmployeeRepository repository;
 
-    public UserServiceImpl(UserRepository userRepository, JwtService jwtService, PasswordEncoder encoder, AuthenticationManager authenticationManager) {
+    public UserServiceImpl(UserRepository userRepository, JwtService jwtService, PasswordEncoder encoder, AuthenticationManager authenticationManager, EmployeeRepository repository) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.encoder = encoder;
         this.authenticationManager = authenticationManager;
+        this.repository = repository;
     }
 
     @Override
@@ -37,7 +43,6 @@ public class UserServiceImpl implements UserService {
         String token = jwtService.generateToken(user);
         return UserResponse.builder().token(token).email(user.getEmail()).build();
     }
-
     @PostConstruct
     public void init() {
         if (!userRepository.existsByEmail("admin@gmail.com")) {

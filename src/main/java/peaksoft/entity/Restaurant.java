@@ -23,7 +23,7 @@ public class Restaurant {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Employee> employees = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "restaurant",cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<Menultem>menultem;
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "restaurant",orphanRemoval = true)
+    private Set<MenuItem> menuItem= new LinkedHashSet<>();
 
 }

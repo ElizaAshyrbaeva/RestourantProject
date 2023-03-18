@@ -1,6 +1,7 @@
 package peaksoft.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "cheques")
+@Builder
 public class Cheque {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cheque_seq")
@@ -26,6 +28,6 @@ public class Cheque {
     private Employee employee;
 
     @ManyToMany(mappedBy = "cheques", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
-    private Set<Menultem> menultems = new LinkedHashSet<>();
+    private Set<MenuItem> menultems = new LinkedHashSet<>();
 
 }
