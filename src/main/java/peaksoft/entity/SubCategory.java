@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -21,11 +22,11 @@ public class SubCategory {
     private Long id;
     private String name;
 
-    @ManyToOne( cascade = {CascadeType.PERSIST,
+    @OneToMany(mappedBy = "subcategory", cascade = {CascadeType.PERSIST,
             CascadeType.MERGE,
             CascadeType.REFRESH,
-            CascadeType.DETACH})
-    private MenuItem menuItem;
+            CascadeType.DETACH},orphanRemoval = true)
+    private List<MenuItem> menuItem;
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     private Category categories;

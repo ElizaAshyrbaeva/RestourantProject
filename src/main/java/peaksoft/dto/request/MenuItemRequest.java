@@ -7,5 +7,7 @@ public record MenuItemRequest(String name,
                               String image,
                               int price,
                               String description,
-                              Long restId) {
+                              Boolean isVegetarian,
+                              Long restId,
+                              Long subCategoryId) {
 }

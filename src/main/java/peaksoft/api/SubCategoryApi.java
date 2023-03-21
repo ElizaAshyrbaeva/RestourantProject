@@ -6,24 +6,25 @@ import peaksoft.dto.response.SimpleResponse;
 import peaksoft.dto.response.SubCategoryResponse;
 import peaksoft.service.SubCategoryService;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/subCategory")
+@RequestMapping("/api/sub")
 public class SubCategoryApi {
     private final SubCategoryService categoryService;
 
     public SubCategoryApi(SubCategoryService categoryService) {
         this.categoryService = categoryService;
     }
-    @PostMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public SimpleResponse save(@RequestBody SubCategoryRequest category,@PathVariable Long id){
-        return categoryService.save(id,category);
+    @PostMapping
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public SimpleResponse save(@RequestBody SubCategoryRequest category){
+        return categoryService.save(category);
     }
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN','WAITER','CHEF')")
-    public List<SubCategoryResponse>getAll(){
-        return categoryService.getAll();
+    public List<SubCategoryResponse>getAll(@RequestParam (required = false)String word){
+        return categoryService.getAll(word);
     }
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
@@ -39,6 +40,11 @@ public class SubCategoryApi {
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public SimpleResponse update(Long id,@RequestBody SubCategoryRequest categoryRequest){
         return categoryService.update(id,categoryRequest);
+    }
+    @PreAuthorize("permitAll()")
+    @GetMapping("/group")
+    public Map<String, List<SubCategoryResponse>> grouping() {
+        return categoryService.groupingByCategory();
     }
 
 }

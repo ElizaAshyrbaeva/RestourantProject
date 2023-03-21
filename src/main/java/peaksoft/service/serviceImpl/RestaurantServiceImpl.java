@@ -25,29 +25,31 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public SimpleResponse save(RestaurantRequest request) {
         Restaurant restaurant = new Restaurant();
-        restaurant.setName(request.name());
-        restaurant.setLocation(request.location());
-        restaurant.setRestType(request.restType());
-        restaurant.setService(request.service());
-        repository.save(restaurant);
-        return SimpleResponse.builder().status(HttpStatus.OK).massage(request.name()+" "+"Successfully saved!!").build();
+        if (request.name() != null && request.name().length() > 4) {
+            restaurant.setName(request.name());
+            restaurant.setLocation(request.location());
+            restaurant.setRestType(request.restType());
+            restaurant.setService(request.service());
+            repository.save(restaurant);
+            return SimpleResponse.builder().status(HttpStatus.OK).massage(request.name() + " " + "Successfully saved!!").build();
+        }
+        return null;
     }
 
     @Override
     public List<RestaurantResponse> getAll() {
-        return repository.getAll();
+        return repository.getAllSB();
     }
 
     @Override
     public SimpleResponse updateRest(Long id, RestaurantRequest request) {
-        repository.findById(id).orElseThrow(()->new NoSuchElementException("Not found!!!"));
-        Restaurant restaurant = new Restaurant();
-        restaurant.setName(request.name());
-        restaurant.setLocation(request.location());
-        restaurant.setRestType(request.restType());
-        restaurant.setService(request.service());
-        repository.save(restaurant);
-        return SimpleResponse.builder().status(HttpStatus.OK).massage("Successful update").build();
+        Restaurant restaurant = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Not found!!!"));
+            restaurant.setName(request.name());
+            restaurant.setLocation(request.location());
+            restaurant.setRestType(request.restType());
+            restaurant.setService(request.service());
+            repository.save(restaurant);
+            return SimpleResponse.builder().status(HttpStatus.OK).massage("Successful update").build();
     }
 
     @Override
@@ -62,4 +64,5 @@ public class RestaurantServiceImpl implements RestaurantService {
         repository.deleteById(id);
         return SimpleResponse.builder().status(HttpStatus.OK).massage("Delete!!!").build();
     }
+
 }

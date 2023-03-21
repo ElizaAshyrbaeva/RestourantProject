@@ -1,46 +1,49 @@
 package peaksoft.api;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.dto.request.StopListRequest;
 import peaksoft.dto.response.SimpleResponse;
+import peaksoft.dto.response.StopListResponse;
+import peaksoft.entity.StopList;
 import peaksoft.service.StopListService;
 
+import java.util.List;
 
-@RequestMapping("/api/list")
 @RestController
+@RequestMapping("/api/list")
 public class StopListApi {
-    private final StopListService listService;
-    @Autowired
-    public StopListApi(StopListService listService) {
-        this.listService = listService;
+    private final StopListService stopListService;
+
+    public StopListApi(StopListService stopListService) {
+        this.stopListService = stopListService;
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("{menuItemId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    private SimpleResponse save(@PathVariable Long id, @RequestBody StopListRequest request) {
-        return listService.save(id, request);
+    public SimpleResponse save(@RequestBody StopListRequest stopListRequest, @PathVariable Long menuItemId){
+       return stopListService.save(menuItemId, stopListRequest);
     }
+    @GetMapping
+    @PreAuthorize("permitAll()")
+    public List<StopListResponse> findAll() {
+        return stopListService.getAll();
+    }
+    @GetMapping("/{id}")
+    @PreAuthorize("permitAll()")
+    public StopListResponse findById(@PathVariable Long id){
+        return stopListService.findById(id);
+    }
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public SimpleResponse delete(@PathVariable Long id){
+        return stopListService.delete(id);
+    }
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public SimpleResponse update(@PathVariable Long id,StopListRequest listRequest){
+        return stopListService.update(id,listRequest);
+    }
+
 }
 
-//    @GetMapping
-//    @PreAuthorize("permitAll()")
-//    public List<StopListResponse> getAll() {
-//        return listService.getAll();
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public SimpleResponse delete(@PathVariable Long id) {
-//        return listService.delete(id);
-//    }
-//
-//    @GetMapping("/{id}")
-//    public StopListResponse findBiId(@PathVariable Long id) {
-//        return listService.findById(id);
-//    }
-//    @PutMapping("/{id}")
-//    public SimpleResponse update(@PathVariable Long id,@RequestBody StopListRequest request){
-//        return listService.update(id,request);
-//    }
-//}

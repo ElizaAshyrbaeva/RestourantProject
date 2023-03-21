@@ -19,11 +19,12 @@ public class Restaurant {
     private String location;
     private String restType;
     private int numberOfEmployees;
-    private int service;
+    private double service;
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Employee> employees = new LinkedHashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "restaurant",orphanRemoval = true)
     private Set<MenuItem> menuItem= new LinkedHashSet<>();
+
 
 }

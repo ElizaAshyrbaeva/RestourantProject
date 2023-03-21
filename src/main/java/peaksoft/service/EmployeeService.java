@@ -10,7 +10,10 @@ public interface EmployeeService {
     EmployeeResponse findById(Long id);
     SimpleResponse deleteById(Long id);
     SimpleResponse update(Long id,EmployeeRequest request);
-    SimpleResponse saveUser(EmployeeRequestToken token);
+    SimpleResponse application(EmployeeRequest request);
+
+    SimpleResponse application(Long id, Boolean accepted);
+
 
 
 }

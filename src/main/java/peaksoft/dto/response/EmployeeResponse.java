@@ -1,6 +1,7 @@
 package peaksoft.dto.response;
 
 import lombok.Builder;
+import peaksoft.enums.Role;
 
 import java.time.LocalDate;
 
@@ -12,5 +13,6 @@ public record EmployeeResponse (
                                 String email,
                                 String password,
                                 String phoneNumber,
+                                Role role,
                                 int experience){
 }

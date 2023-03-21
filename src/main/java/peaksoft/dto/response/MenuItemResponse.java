@@ -7,6 +7,6 @@ public record MenuItemResponse(Long id,
                                String image,
                                int price,
                                String description,
-                               boolean isVegetarian,
-                               String restName) {
+                               boolean isVegetarian
+                               ) {
 }

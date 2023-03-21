@@ -1,8 +1,10 @@
 package peaksoft.entity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import static jakarta.persistence.CascadeType.*;
 
@@ -10,6 +12,8 @@ import static jakarta.persistence.CascadeType.*;
 @Setter
 @Entity
 @Table(name = "menu_items")
+@NoArgsConstructor
+@AllArgsConstructor
 
 public class MenuItem {
     @Id
@@ -20,7 +24,7 @@ public class MenuItem {
     private String image;
     private int price;
     private String description;
-    private boolean isVegetarian;
+    private Boolean isVegetarian;
 
     @ManyToOne( cascade = {PERSIST,
             MERGE,
@@ -29,11 +33,25 @@ public class MenuItem {
     private Restaurant restaurant;
 
     @ManyToMany(cascade = {PERSIST, MERGE, REFRESH, DETACH})
-    private Set<Cheque> cheques = new LinkedHashSet<>();
+    private List<Cheque> cheques ;
 
     @ManyToOne(cascade = {PERSIST,MERGE,REFRESH,DETACH})
     private SubCategory subcategory;
     @OneToOne(cascade = {ALL}, orphanRemoval = true)
-    private StopList stopList;
+    private StopList list;
+    public  void addCheck(Cheque cheque){
+        if (cheques==null){
+            cheques=new ArrayList<>();
+        }
+        cheques.add(cheque);
+    }
 
+    public MenuItem(String name, String image, int price, String description, boolean isVegetarian, Restaurant restaurant) {
+        this.name = name;
+        this.image = image;
+        this.price = price;
+        this.description = description;
+        this.isVegetarian = isVegetarian;
+        this.restaurant = restaurant;
+    }
 }

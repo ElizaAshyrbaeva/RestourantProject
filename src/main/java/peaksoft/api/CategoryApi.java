@@ -28,7 +28,7 @@ public class CategoryApi {
        return categoryService.getAll();
     }
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public SimpleResponse delete(@PathVariable Long id){
         return categoryService.deleteById(id);
     }

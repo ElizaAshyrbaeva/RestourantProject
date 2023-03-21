@@ -1,9 +1,7 @@
 package peaksoft.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -13,6 +11,8 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "categories")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_seq")
@@ -21,6 +21,6 @@ public class Category {
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,mappedBy = "categories")
-    private Set<SubCategory> subcategory = new LinkedHashSet<>();
+    private List<SubCategory> subcategory ;
 
 }

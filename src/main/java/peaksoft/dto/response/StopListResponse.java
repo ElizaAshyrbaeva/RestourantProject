@@ -3,10 +3,8 @@ package peaksoft.dto.response;
 import lombok.Builder;
 
 import java.time.LocalDate;
-
 @Builder
-public record StopListResponse(Long id,
-                               String reason,
+public record StopListResponse(String reason,
                                LocalDate date,
-                               String menuItem) {
+                               String menuName) {
 }

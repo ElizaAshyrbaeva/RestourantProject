@@ -1,13 +1,12 @@
 package peaksoft.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import peaksoft.enums.Role;
 
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import static jakarta.persistence.CascadeType.*;
@@ -16,6 +15,8 @@ import static jakarta.persistence.CascadeType.PERSIST;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "employees")
 public class Employee {
     @Id
@@ -31,12 +32,11 @@ public class Employee {
     @Enumerated(EnumType.STRING)
     private Role role;
     private int experience;
-
-
+    private Boolean accepted;
     @ManyToOne(cascade = {PERSIST,MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     private Restaurant restaurant;
 
     @OneToMany(mappedBy = "employee", cascade = {PERSIST, MERGE,REFRESH,DETACH}, orphanRemoval = true)
-    private Set<Cheque> cheques = new LinkedHashSet<>();
+    private List<Cheque> cheques ;
 
 }
