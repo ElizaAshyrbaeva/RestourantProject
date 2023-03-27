@@ -1,5 +1,6 @@
 package peaksoft.api;
 
+import jakarta.annotation.security.PermitAll;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.dto.request.StopListRequest;
@@ -25,13 +26,13 @@ public class StopListApi {
        return stopListService.save(menuItemId, stopListRequest);
     }
     @GetMapping
-    @PreAuthorize("permitAll()")
-    public List<StopListResponse> findAll() {
+    @PermitAll
+    public List<StopList> findAll() {
         return stopListService.getAll();
     }
     @GetMapping("/{id}")
     @PreAuthorize("permitAll()")
-    public StopListResponse findById(@PathVariable Long id){
+    public StopList findById(@PathVariable Long id){
         return stopListService.findById(id);
     }
     @DeleteMapping("/{id}")

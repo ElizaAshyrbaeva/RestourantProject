@@ -3,9 +3,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
+
 import static jakarta.persistence.CascadeType.*;
 
 @Getter
@@ -25,6 +24,7 @@ public class MenuItem {
     private int price;
     private String description;
     private Boolean isVegetarian;
+    private Boolean inStock;
 
     @ManyToOne( cascade = {PERSIST,
             MERGE,

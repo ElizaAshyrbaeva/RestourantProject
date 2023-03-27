@@ -7,5 +7,6 @@ import java.time.LocalDate;
 @Builder
 public record StopListRequest(
         String reason,
-        LocalDate date) {
+        LocalDate date,
+        Long menuId) {
 }

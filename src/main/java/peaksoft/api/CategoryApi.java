@@ -4,6 +4,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.dto.request.CategoryRequest;
 import peaksoft.dto.response.CategoryResponse;
+import peaksoft.dto.response.PaginationResponse;
 import peaksoft.dto.response.SimpleResponse;
 import peaksoft.service.CategoryService;
 import java.util.List;
@@ -42,5 +43,10 @@ public class CategoryApi {
     public SimpleResponse update(@PathVariable Long id,@RequestBody CategoryRequest request){
        return categoryService.update(id,request);
     }
+    @GetMapping("/pagination")
+        public PaginationResponse getCategoryPage(@RequestParam int page,
+                                                  @RequestParam int size){
+        return categoryService.getBookPage(page,size);
 
+    }
 }

@@ -9,5 +9,6 @@ public record MenuItemRequest(String name,
                               String description,
                               Boolean isVegetarian,
                               Long restId,
-                              Long subCategoryId) {
+                              Long subCategoryId,
+                              Long listId) {
 }

@@ -1,15 +1,16 @@
 package peaksoft.dto.response;
 import lombok.Builder;
+import lombok.Data;
 import peaksoft.entity.MenuItem;
-
 import java.util.List;
-import java.util.Set;
 
-@Builder
-public record ChequeResponse(Long id,
-                             String waiterFullName,
-                             double averagePrice,
-                             double service,
-                             Double total,
-                             List<MenuAllResponse> menuItems) {
+@Data
+public class ChequeResponse {
+
+    private Long id;
+    private String fullName;
+    private List<MenuItem> items;
+    private double averagePrice;
+    private double service;
+    private double grandTotal;
 }

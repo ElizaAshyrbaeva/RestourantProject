@@ -1,12 +1,9 @@
 package peaksoft.service;
 
 import peaksoft.dto.request.ChequeRequest;
-import peaksoft.dto.request.EmployeeRequest;
 import peaksoft.dto.response.ChequeResponse;
-import peaksoft.dto.response.EmployeeResponse;
 import peaksoft.dto.response.SimpleResponse;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public interface ChequeService {
@@ -19,7 +16,7 @@ public interface ChequeService {
     SimpleResponse update(Long id, ChequeRequest request);
 
     List<ChequeResponse> findAll();
-    SimpleResponse totalSum(Long id,LocalDate date);
+    Double totalSum(Long id);
 
-    SimpleResponse avg(LocalDate date);
+    Double avg(Long id);
 }

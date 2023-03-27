@@ -6,7 +6,9 @@ import peaksoft.enums.Role;
 import java.time.LocalDate;
 
 @Builder
-public record EmployeeRequest(String firstName,
+public record EmployeeRequest(
+        Long restId,
+        String firstName,
                               String lastName,
                               LocalDate dateOfBirth,
                               String email,

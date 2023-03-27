@@ -42,24 +42,23 @@ public class SubCategoryImpl implements SubCategoryService {
     }
 
     @Override
-    public List<SubCategoryResponse> getAll(String word) {
-        if (word == null) {
+    public List<SubCategoryResponse> getAll(Long id) {
+        if (id == null) {
             return repository.getAllSub();
+        } else {
+            return repository.findAllByCategoryIdOrderByName(id);
         }
-        return null;
     }
 
     @Override
     public SubCategoryResponse findBiId(Long id) {
         return repository.findByIdSub(id).orElseThrow(() -> new NoSuchElementException("Not found!!!"));
     }
-
     @Override
     public SimpleResponse delete(Long id) {
         repository.deleteById(id);
         return SimpleResponse.builder().status(HttpStatus.OK).massage("Successfully delete...").build();
     }
-
     @Override
     public SimpleResponse update(Long id, SubCategoryRequest request) {
         Category category1 = categoryRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Not found!!"));

@@ -17,4 +17,9 @@ public interface SubcategoryRepository extends JpaRepository<SubCategory, Long> 
     Optional<SubCategoryResponse> findByIdSub(Long id);
     @Query("select new peaksoft.dto.response.SubCategoryByCategory(c.name,s.name) from Category c join c.subcategory s")
     List<SubCategoryResponse>grouping();
+    @Query("select new peaksoft.dto.response.SubCategoryResponse(s.id,s.name,s.categories.name) from SubCategory  s  order by  s.name ")
+    List<SubCategoryResponse> findAllByCategoryIdOrderByName(Long id);
+
+
+
 }

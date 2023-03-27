@@ -2,14 +2,17 @@ package peaksoft.service.serviceImpl;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import peaksoft.dto.request.CategoryRequest;
 import peaksoft.dto.response.CategoryResponse;
+import peaksoft.dto.response.PaginationResponse;
 import peaksoft.dto.response.SimpleResponse;
 import peaksoft.entity.Category;
 import peaksoft.repository.CategoryRepository;
 import peaksoft.service.CategoryService;
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -52,5 +55,13 @@ public class CategoryServiceImpl implements CategoryService {
         category.setName(request.name());
         repository.save(category);
         return SimpleResponse.builder().status(HttpStatus.OK).massage("Update").build();
+    }
+
+    @Override
+    public PaginationResponse getBookPage(int page, int size) {
+//        Pageable pageable = PageRequest.of(size,page);
+//        PaginationResponse response= new PaginationResponse();
+//        pageable.set
+        return null;
     }
 }

@@ -29,38 +29,44 @@ public class StopListServiceImpl implements StopListService {
     public SimpleResponse save(Long id,StopListRequest request) {
         MenuItem menuItem = menuItemRepository.findById(id).orElseThrow(() ->
                 new NoSuchElementException("not found"));
+        boolean exists = repository.existsByMenuitem(menuItem);
+        if (exists && menuItem.getList().getDate().equals(request.date())){
+            return SimpleResponse.builder().status(HttpStatus.CONFLICT).massage(String.format("bbds"+menuItem.getName())).build();
+        }
             StopList stopList = new StopList();
             stopList.setReason(request.reason());
             stopList.setDate(request.date());
             stopList.setMenuitem(menuItem);
             repository.save(stopList);
-            return SimpleResponse.builder().status(HttpStatus.OK).massage(String.format("Successfully saved %s"+menuItem.getName())).build();
+            return SimpleResponse.builder().status(HttpStatus.OK).massage("Successfully saved ").build();
 
-    }
+        }
 
     @Override
-    public List<StopListResponse> getAll() {
-        return repository.getAllList();
+    public List<StopList> getAll() {
+        return repository.findAll();
     }
-
     @Override
     public SimpleResponse delete(Long id) {
         repository.deleteById(id);
         return SimpleResponse.builder().status(HttpStatus.OK).massage("delete").build();
     }
-
     @Override
     public SimpleResponse update(Long id, StopListRequest request) {
         StopList list = repository.findById(id).orElseThrow(() -> new NoSuchElementException(String.format("This Id : %s not found",id)));
-       list.setReason(request.reason());
+        MenuItem menuItem = menuItemRepository.findById(request.menuId()).orElseThrow(() -> new NoSuchElementException(String.format("Menu item id : %s " + request.menuId() + " is no exist!")));
+        list.setMenuitem(menuItem);
+        list.setReason(request.reason());
        list.setDate(request.date());
        repository.save(list);
         return SimpleResponse.builder().status(HttpStatus.OK).massage("Successfully update!").build();
     }
 
     @Override
-    public StopListResponse findById(Long id) {
-        return repository.findByIdList(id).orElseThrow(()->new NoSuchElementException(String.format("This ID: %s not found! ",id)));
+    public StopList findById(Long id) {
+        return repository.findById(id).orElseThrow(()->
+                new NoSuchElementException(String.format
+                        ("This Id: %s not found! ",id)));
     }
 
 }

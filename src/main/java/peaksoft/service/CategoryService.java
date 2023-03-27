@@ -4,6 +4,7 @@ import peaksoft.dto.request.CategoryRequest;
 import peaksoft.dto.request.EmployeeRequest;
 import peaksoft.dto.response.CategoryResponse;
 import peaksoft.dto.response.EmployeeResponse;
+import peaksoft.dto.response.PaginationResponse;
 import peaksoft.dto.response.SimpleResponse;
 import peaksoft.entity.Category;
 
@@ -15,5 +16,5 @@ public interface CategoryService {
     CategoryResponse findById(Long id);
     SimpleResponse deleteById(Long id);
     SimpleResponse update(Long id,CategoryRequest request);
-
+    PaginationResponse getBookPage(int page,int size);
 }

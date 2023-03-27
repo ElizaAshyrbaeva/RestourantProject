@@ -1,8 +1,10 @@
 package peaksoft.api;
 
+import jakarta.annotation.security.PermitAll;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import peaksoft.dto.request.AcceptOrRejectRequest;
 import peaksoft.dto.request.EmployeeRequest;
 import peaksoft.dto.response.EmployeeResponse;
 import peaksoft.dto.response.SimpleResponse;
@@ -15,44 +17,58 @@ import java.util.List;
 @RequestMapping("/api/employees")
 public class EmployeeApi {
     private final EmployeeService service;
-    private final UserService userService;
-    public EmployeeApi(EmployeeService service, UserService userService) {
+
+    public EmployeeApi(EmployeeService service) {
         this.service = service;
-        this.userService = userService;
     }
-    @PostMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN','WAITER')")
-    public SimpleResponse save(@RequestBody @Validated EmployeeRequest employeeRequest){
-        return service.saveEmployee(employeeRequest);
+
+    @PermitAll
+    @GetMapping("/false")
+    public List<EmployeeResponse> getAll() {
+        return service.getAll();
     }
-    @PreAuthorize("permitAll()")
-    @GetMapping
-    public List<EmployeeResponse> getAll(){
-       return service.getAll();
-    }
+
     @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
-    public EmployeeResponse findById(@PathVariable Long id){
+    public EmployeeResponse findById(@PathVariable Long id) {
         return service.findById(id);
     }
+
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @DeleteMapping("/{id}")
-    public SimpleResponse delete(@PathVariable Long id){
+    public SimpleResponse delete(@PathVariable Long id) {
         return service.deleteById(id);
     }
+
     @PutMapping("/{id}")
-//    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public SimpleResponse update(@PathVariable Long id,@RequestBody EmployeeRequest employeeRequest) {
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public SimpleResponse update(@PathVariable Long id,
+                                 @RequestBody EmployeeRequest employeeRequest) {
         return service.update(id, employeeRequest);
     }
-    @PostMapping("/application")
-    public SimpleResponse application(@RequestBody EmployeeRequest employeeRequest){
-        return service.application(employeeRequest);
-    }
-//    @PostMapping
-//    public  SimpleResponse applications(@RequestParam (required = false)Long id,
-//                                        @RequestParam(required = false)Boolean accepted){
-//        return userService.application(id,accepted);
-//    }
 
+    @GetMapping("/applications")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    List<EmployeeResponse> getApplications() {
+        return service.getApplications();
+    }
+
+    @PostMapping("/acceptOrReject")
+    @PermitAll
+    SimpleResponse acceptOrReject(@RequestBody AcceptOrRejectRequest request) {
+        return service.acceptOrReject(request);
+    }
+
+    @PostMapping("/{id}/save")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public SimpleResponse save(@RequestBody EmployeeRequest employeeRequest,
+                               @PathVariable Long id) {
+        return service.save(employeeRequest, id);
+    }
+
+    @GetMapping
+    @PermitAll
+    public List<EmployeeResponse> findAll(){
+        return service.getAll();
+    }
 }

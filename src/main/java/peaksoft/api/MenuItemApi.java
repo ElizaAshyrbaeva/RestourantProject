@@ -1,5 +1,6 @@
 package peaksoft.api;
 
+import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import peaksoft.dto.response.SimpleResponse;
 import peaksoft.service.MenuItemService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/menu")
@@ -20,16 +22,14 @@ public class MenuItemApi {
         this.service = service;
     }
     @PreAuthorize("hasAnyAuthority('ADMIN','CHEF')")
-    @PostMapping("/{id}")
-    public SimpleResponse save(@PathVariable Long id,@RequestBody MenuItemRequest request){
-        return service.save(id,request);
+    @PostMapping
+    public SimpleResponse save(@RequestBody MenuItemRequest request){
+        return service.save(request);
     }
     @PreAuthorize("permitAll()")
     @GetMapping
-    public List<MenuItemResponse>getAll(@RequestParam(required = false) String word,
-                                       @RequestParam(required = false,defaultValue = "asc") String sort,
-                                       @RequestParam(required = false) Boolean isVegan){
-        return service.sortByPriceAndFilterVeganAndSearch(word,isVegan,sort);
+    public List<MenuItemResponse>getAll(@RequestParam(required = false) String sort){
+        return service.sort(sort);
     }
     @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
@@ -41,9 +41,24 @@ public class MenuItemApi {
     public SimpleResponse update(@PathVariable Long id,@RequestBody MenuItemRequest request){
         return service.update(id,request);
     }
-    @PreAuthorize("hasAnyAuthority('ADMIN','CHEF')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN','CHEF')")
     @DeleteMapping("/{id}")
     public SimpleResponse delete(@PathVariable Long id){
         return service.delete(id);
+    }
+    @PermitAll
+    @GetMapping("/search")
+    public List<MenuItemResponse>search(@RequestParam(required = false) String word){
+        return service.globalSearch(word);
+    }
+    @PermitAll
+    @GetMapping("/sort")
+    public List<MenuItemResponse>sort(@RequestParam String sort){
+        return service.sort(sort);
+    }
+    @PermitAll
+    @GetMapping("/grouping")
+    public Map<Boolean, List<MenuItemResponse>> filter(){
+        return service.filterByVegetarian();
     }
 }

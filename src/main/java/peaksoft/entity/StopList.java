@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class StopList {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "list_seq")
-    @SequenceGenerator(name = "list_seq")
+    @SequenceGenerator(name = "list_seq",allocationSize = 1)
     private Long id;
     private String reason;
     private LocalDate date;

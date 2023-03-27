@@ -10,7 +10,7 @@ import java.util.Map;
 
 public interface SubCategoryService {
     SimpleResponse save(SubCategoryRequest request);
-    List<SubCategoryResponse> getAll(String word);
+    List<SubCategoryResponse> getAll(Long id);
     SubCategoryResponse findBiId(Long id);
     SimpleResponse delete(Long id);
     SimpleResponse update(Long id,SubCategoryRequest request);

@@ -7,12 +7,15 @@ import peaksoft.dto.request.MenuItemRequest;
 import peaksoft.dto.response.*;
 import peaksoft.entity.MenuItem;
 import peaksoft.entity.Restaurant;
+import peaksoft.entity.StopList;
 import peaksoft.entity.SubCategory;
 import peaksoft.repository.MenuItemRepository;
 import peaksoft.repository.RestaurantRepository;
+import peaksoft.repository.StopListRepository;
 import peaksoft.repository.SubcategoryRepository;
 import peaksoft.service.MenuItemService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -24,32 +27,38 @@ public class MenuItemServiceImpl implements MenuItemService {
     private final RestaurantRepository repository;
     private final MenuItemRepository menuItemRepository;
     private final SubcategoryRepository subcategoryRepository;
+    private final StopListRepository stopListRepository;
 
-    public MenuItemServiceImpl(RestaurantRepository repository, MenuItemRepository menuItemRepository, SubcategoryRepository subcategoryRepository) {
+    public MenuItemServiceImpl(RestaurantRepository repository, MenuItemRepository menuItemRepository, SubcategoryRepository subcategoryRepository, StopListRepository stopListRepository) {
         this.repository = repository;
         this.menuItemRepository = menuItemRepository;
         this.subcategoryRepository = subcategoryRepository;
+        this.stopListRepository = stopListRepository;
     }
 
     @Override
     @Transactional
-    public SimpleResponse save(Long id, MenuItemRequest request) {
-        Restaurant restaurant = repository.findById(id).orElseThrow(() -> new NoSuchElementException(String.format("NOD FOUND!!!", request.restId())));
-        SubCategory subCategory = subcategoryRepository.findById(request.subCategoryId()).orElseThrow(() -> new NoSuchElementException(String.format("Not found!", request.subCategoryId())));
+    public SimpleResponse save(MenuItemRequest request) {
+        SubCategory subCategory = subcategoryRepository.findById(request.subCategoryId()).orElseThrow(() -> new NoSuchElementException("Not fount"));
+        Restaurant restaurant = repository.findById(request.restId()).orElseThrow(() -> new NoSuchElementException("NOd found"));
+        StopList stopList = stopListRepository.findById(request.listId()).orElseThrow(() -> new NoSuchElementException("Not found!"));
         MenuItem menuItem = new MenuItem();
         menuItem.setName(request.name());
         menuItem.setImage(request.image());
         menuItem.setPrice(request.price());
         menuItem.setDescription(request.description());
         menuItem.setIsVegetarian(request.isVegetarian());
+        menuItem.setInStock(true);
         menuItem.setRestaurant(restaurant);
         menuItem.setSubcategory(subCategory);
+        menuItem.setList(stopList);
         menuItemRepository.save(menuItem);
-        return SimpleResponse.builder().status(HttpStatus.OK).massage("Successfully saved..").build();
+        return SimpleResponse.builder().status(HttpStatus.OK).
+                massage(" Successfully saved..").build();
     }
 
     @Override
-    public List<MenuAllResponse> getAll() {
+    public List<MenuItemResponse> getAll() {
         return menuItemRepository.getAllMenu();
     }
 
@@ -78,15 +87,40 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
-    public List<MenuItemResponse> sortByPriceAndFilterVeganAndSearch(String word, Boolean vegan, String sort) {
-        if (word.equalsIgnoreCase("asc")) {
+    public List<MenuItemResponse> sort(String sort) {
+        if (sort.equalsIgnoreCase("asc")) {
             return menuItemRepository.sortByAsc();
         } else if (sort.equalsIgnoreCase("desc")) {
             return menuItemRepository.sortByDesc();
-        } else if (word == null) {
-
+        } else {
+            return getAll();
         }
-        return null;
+    }
+
+    @Override
+    public Map<Boolean, List<MenuItemResponse>> filterByVegetarian() {
+        return menuItemRepository.getAllMenu().stream().collect(Collectors.groupingBy(MenuItemResponse::isVegetarian));
+
+    }
+
+    @Override
+    public List<MenuItemResponse> globalSearch(String word) {
+        LocalDate date=LocalDate.now();
+        if (word==null){
+            for (StopList stopList : stopListRepository.findAll()) {
+                 if(stopList.getDate().equals(date)){
+                    stopList.getMenuitem().setInStock(false);
+                    stopListRepository.save(stopList);
+                } else {
+                    stopList.getMenuitem().setInStock(true);
+                    stopListRepository.save(stopList);
+                }
+            }
+            return menuItemRepository.getAllMenu();
+        } else {
+            return menuItemRepository.globalSearch(word);
+
+            }
     }
 }
 

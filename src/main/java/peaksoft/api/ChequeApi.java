@@ -7,11 +7,7 @@ import peaksoft.dto.request.ChequeRequest;
 import peaksoft.dto.response.ChequeResponse;
 import peaksoft.dto.response.SimpleResponse;
 import peaksoft.service.ChequeService;
-
-import java.time.LocalDate;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/check")
@@ -47,17 +43,14 @@ public class ChequeApi {
     public SimpleResponse update(@PathVariable Long id,ChequeRequest request){
         return chequeService.update(id,request);
     }
-
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/total/{id}")
-    public SimpleResponse totalSum(@PathVariable Long id,
-                                   @RequestParam(required = false) LocalDate date){
-        return chequeService.totalSum(id, Objects.requireNonNullElseGet(date,LocalDate::now));
+    public Double totalSum(@PathVariable Long id){
+        return chequeService.totalSum(id);
     }
-
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/avg")
-    public SimpleResponse avg(@RequestParam(required = false) LocalDate date){
-        return chequeService.avg(Objects.requireNonNullElseGet(date, LocalDate::now));
+    @GetMapping("/avg/{id}")
+    public Double avg(@PathVariable Long id){
+        return chequeService.avg(id);
     }
 }
