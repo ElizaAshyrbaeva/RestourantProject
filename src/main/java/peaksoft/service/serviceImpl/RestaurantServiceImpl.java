@@ -7,6 +7,7 @@ import peaksoft.dto.request.RestaurantRequest;
 import peaksoft.dto.response.RestaurantResponse;
 import peaksoft.dto.response.SimpleResponse;
 import peaksoft.entity.Restaurant;
+import peaksoft.exceptions.NotFoundException;
 import peaksoft.repository.RestaurantRepository;
 import peaksoft.service.RestaurantService;
 
@@ -42,8 +43,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public SimpleResponse updateRest(RestaurantRequest request) {
-        Restaurant restaurant = new Restaurant();
+    public SimpleResponse updateRest(Long id,RestaurantRequest request) {
+        Restaurant restaurant = repository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Restaurant with id: %s successfully updated", id)));
         restaurant.setName(request.name());
         restaurant.setLocation(request.location());
         restaurant.setRestType(request.restType());

@@ -8,6 +8,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static jakarta.persistence.CascadeType.*;
+import static jakarta.persistence.CascadeType.REFRESH;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -28,7 +31,7 @@ public class SubCategory {
             CascadeType.DETACH},orphanRemoval = true)
     private List<MenuItem> menuItem;
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {MERGE,DETACH,PERSIST,REFRESH})
     private Category categories;
 
 }

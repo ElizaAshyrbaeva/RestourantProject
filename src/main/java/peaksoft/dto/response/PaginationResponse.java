@@ -7,7 +7,7 @@ import peaksoft.dto.request.CategoryRequest;
 import java.util.List;
 @Data
 public class PaginationResponse {
-    private List<CategoryRequest> getAll;
+    private List<MenuItemResponse> getAll;
     private int currentPage;
     private int pageSize;
     }

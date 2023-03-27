@@ -11,7 +11,7 @@ import java.util.List;
 public interface RestaurantService {
     SimpleResponse save(RestaurantRequest request);
     List<RestaurantResponse>getAll();
-    SimpleResponse updateRest(RestaurantRequest request);
+    SimpleResponse updateRest(Long id,RestaurantRequest request);
     RestaurantResponse getById(Long id);
     SimpleResponse deleteById(Long id);
 }

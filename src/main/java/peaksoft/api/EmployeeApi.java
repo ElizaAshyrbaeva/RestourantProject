@@ -22,19 +22,13 @@ public class EmployeeApi {
         this.service = service;
     }
 
-    @PermitAll
-    @GetMapping("/false")
-    public List<EmployeeResponse> getAll() {
-        return service.getAll();
-    }
-
     @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
     public EmployeeResponse findById(@PathVariable Long id) {
         return service.findById(id);
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+//    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public SimpleResponse delete(@PathVariable Long id) {
         return service.deleteById(id);

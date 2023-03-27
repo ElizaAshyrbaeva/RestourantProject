@@ -18,5 +18,4 @@ public interface ChequeService {
     List<ChequeResponse> findAll();
     Double totalSum(Long id);
 
-    Double avg(Long id);
-}
+    Double avg(Long id);}

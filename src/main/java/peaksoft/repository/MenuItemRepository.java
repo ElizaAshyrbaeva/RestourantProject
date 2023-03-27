@@ -1,4 +1,6 @@
 package peaksoft.repository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import peaksoft.dto.response.MenuItemResponse;
@@ -20,4 +22,5 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
             "or lower(m.subcategory.categories.name) ilike lower(concat('%',:word,'%') ) ")
     List<MenuItemResponse>globalSearch(String word);
     List<MenuItemResponse> findMenuItemByIsVegetarian(boolean isTrue);
+    Page<MenuItemResponse> findAllBy(Pageable pageable);
 }

@@ -20,7 +20,7 @@ public class StopList {
     private Long id;
     private String reason;
     private LocalDate date;
-    @OneToOne(mappedBy = "list", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne( cascade = CascadeType.ALL, orphanRemoval = true)
     private MenuItem menuitem;
 
     public StopList(LocalDate date, String reason) {

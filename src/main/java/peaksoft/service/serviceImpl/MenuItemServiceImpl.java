@@ -1,6 +1,9 @@
 package peaksoft.service.serviceImpl;
 
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import peaksoft.dto.request.MenuItemRequest;
@@ -41,7 +44,6 @@ public class MenuItemServiceImpl implements MenuItemService {
     public SimpleResponse save(MenuItemRequest request) {
         SubCategory subCategory = subcategoryRepository.findById(request.subCategoryId()).orElseThrow(() -> new NoSuchElementException("Not fount"));
         Restaurant restaurant = repository.findById(request.restId()).orElseThrow(() -> new NoSuchElementException("NOd found"));
-        StopList stopList = stopListRepository.findById(request.listId()).orElseThrow(() -> new NoSuchElementException("Not found!"));
         MenuItem menuItem = new MenuItem();
         menuItem.setName(request.name());
         menuItem.setImage(request.image());
@@ -51,7 +53,6 @@ public class MenuItemServiceImpl implements MenuItemService {
         menuItem.setInStock(true);
         menuItem.setRestaurant(restaurant);
         menuItem.setSubcategory(subCategory);
-        menuItem.setList(stopList);
         menuItemRepository.save(menuItem);
         return SimpleResponse.builder().status(HttpStatus.OK).
                 massage(" Successfully saved..").build();
@@ -121,6 +122,19 @@ public class MenuItemServiceImpl implements MenuItemService {
             return menuItemRepository.globalSearch(word);
 
             }
+    }
+
+    @Override
+    public PaginationResponse getItemPagination(int page, int size) {
+        Pageable pageable = PageRequest.of(page-1,size);
+        Page<MenuItemResponse> pagedItems = menuItemRepository.findAllBy(pageable);
+        List<MenuItemResponse> paged = pagedItems.getContent().stream().map(menuItem->new MenuItemResponse(
+                menuItem.id(),menuItem.name(),menuItem.image(),menuItem.price(),menuItem.description(),menuItem.isVegetarian())).toList();
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setGetAll(paged);
+        paginationResponse.setCurrentPage(pageable.getPageNumber());
+        paginationResponse.setPageSize(pagedItems.getTotalPages());
+        return paginationResponse;
     }
 }
 

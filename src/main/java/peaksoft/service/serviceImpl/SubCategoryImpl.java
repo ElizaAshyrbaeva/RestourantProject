@@ -42,11 +42,11 @@ public class SubCategoryImpl implements SubCategoryService {
     }
 
     @Override
-    public List<SubCategoryResponse> getAll(Long id) {
-        if (id == null) {
+    public List<SubCategoryResponse> getAll(String word) {
+        if (word == null) {
             return repository.getAllSub();
         } else {
-            return repository.findAllByCategoryIdOrderByName(id);
+            return repository.orderByName(word);
         }
     }
 
@@ -71,7 +71,6 @@ public class SubCategoryImpl implements SubCategoryService {
 
     @Override
     public Map<String, List<SubCategoryResponse>> groupingByCategory() {
-        List<SubCategoryResponse> group = repository.grouping();
-        return group.stream().collect(Collectors.groupingBy(SubCategoryResponse::categoryName));
+        return repository.getAllSub().stream().collect(Collectors.groupingBy(SubCategoryResponse::categoryName));
     }
 }

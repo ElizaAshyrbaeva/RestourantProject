@@ -10,6 +10,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static jakarta.persistence.CascadeType.*;
+
 @Getter
 @Setter
 @Entity
@@ -26,11 +28,11 @@ public class Cheque {
     private LocalDate createAt;
     private double grandTotal;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
+    @ManyToOne(cascade = {PERSIST, MERGE, REFRESH,DETACH})
     private Employee employee;
 
-    @ManyToMany(mappedBy = "cheques", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
-    private List<MenuItem> menuItems = new ArrayList<>();
+    @ManyToMany(mappedBy = "cheques", cascade = {PERSIST,MERGE,REFRESH,DETACH})
+    private List<MenuItem> menuItems;
         public void  addMenu(MenuItem item){
             if (menuItems==null){
                 menuItems=new ArrayList<>();

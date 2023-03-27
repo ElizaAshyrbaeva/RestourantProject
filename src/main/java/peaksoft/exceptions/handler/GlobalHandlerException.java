@@ -47,5 +47,12 @@ public class GlobalHandlerException {
                 e.getMessage()
         );
     }
+    @ExceptionHandler(NoSuchElementException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionResponse handleNoSuchElementException(NoSuchElementException e){
+        return new ExceptionResponse(HttpStatus.BAD_REQUEST,
+                e.getClass().getSimpleName(),
+                e.getMessage());
+    }
 
 }

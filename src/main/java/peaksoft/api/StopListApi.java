@@ -5,7 +5,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.dto.request.StopListRequest;
 import peaksoft.dto.response.SimpleResponse;
-import peaksoft.dto.response.StopListResponse;
 import peaksoft.entity.StopList;
 import peaksoft.service.StopListService;
 

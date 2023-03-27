@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import peaksoft.dto.request.MenuItemRequest;
 import peaksoft.dto.response.MenuAllResponse;
 import peaksoft.dto.response.MenuItemResponse;
+import peaksoft.dto.response.PaginationResponse;
 import peaksoft.dto.response.SimpleResponse;
 import peaksoft.service.MenuItemService;
 
@@ -48,12 +49,12 @@ public class MenuItemApi {
     }
     @PermitAll
     @GetMapping("/search")
-    public List<MenuItemResponse>search(@RequestParam(required = false) String word){
+    public List<MenuItemResponse>search(@RequestParam String word){
         return service.globalSearch(word);
     }
     @PermitAll
     @GetMapping("/sort")
-    public List<MenuItemResponse>sort(@RequestParam String sort){
+    public List<MenuItemResponse>sortByPrice(@RequestParam String sort){
         return service.sort(sort);
     }
     @PermitAll
@@ -61,4 +62,12 @@ public class MenuItemApi {
     public Map<Boolean, List<MenuItemResponse>> filter(){
         return service.filterByVegetarian();
     }
+
+    @PermitAll
+    @GetMapping("/pagination")
+    public PaginationResponse getMenuPage(@RequestParam int page,
+                                          @RequestParam int size) {
+        return service.getItemPagination(page, size);
+    }
+
 }

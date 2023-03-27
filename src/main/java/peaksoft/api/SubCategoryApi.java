@@ -23,8 +23,8 @@ public class SubCategoryApi {
     }
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN','WAITER','CHEF')")
-    public List<SubCategoryResponse>getAll(@RequestParam (required = false)Long id){
-        return categoryService.getAll(id);
+    public List<SubCategoryResponse>getAll(@RequestParam (required = false)String word){
+        return categoryService.getAll(word);
     }
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")

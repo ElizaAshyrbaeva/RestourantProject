@@ -37,21 +37,6 @@ public class MenuItem {
 
     @ManyToOne(cascade = {PERSIST,MERGE,REFRESH,DETACH})
     private SubCategory subcategory;
-    @OneToOne(cascade = {ALL}, orphanRemoval = true)
+    @OneToOne(cascade = {ALL}, orphanRemoval = true,mappedBy = "menuitem")
     private StopList list;
-    public  void addCheck(Cheque cheque){
-        if (cheques==null){
-            cheques=new ArrayList<>();
-        }
-        cheques.add(cheque);
-    }
-
-    public MenuItem(String name, String image, int price, String description, boolean isVegetarian, Restaurant restaurant) {
-        this.name = name;
-        this.image = image;
-        this.price = price;
-        this.description = description;
-        this.isVegetarian = isVegetarian;
-        this.restaurant = restaurant;
-    }
 }

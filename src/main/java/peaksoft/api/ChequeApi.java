@@ -43,12 +43,12 @@ public class ChequeApi {
     public SimpleResponse update(@PathVariable Long id,ChequeRequest request){
         return chequeService.update(id,request);
     }
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/total/{id}")
     public Double totalSum(@PathVariable Long id){
         return chequeService.totalSum(id);
     }
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/avg/{id}")
     public Double avg(@PathVariable Long id){
         return chequeService.avg(id);

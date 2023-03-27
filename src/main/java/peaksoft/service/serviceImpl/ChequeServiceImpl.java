@@ -74,11 +74,7 @@ public class ChequeServiceImpl implements ChequeService {
     public SimpleResponse update(Long id, ChequeRequest request) {
         Cheque cheque = chequeRepository.findById(id).orElseThrow(() -> new NoSuchElementException(String.format("Cheque with  id: %s not found", id)));
         Employee employee = employeeRepository.findById(request.userId()).orElseThrow(() -> new NoSuchElementException("Employee Not Fount!"));
-        List<MenuItem> menuItems = new ArrayList<>();
-        for (Long aLong : request.menuId()) {
-            MenuItem menuItem = menuItemRepository.findById(aLong).orElseThrow(() -> new NoSuchElementException("MenuItem with id: " + id + " not found!"));
-            menuItems.add(menuItem);
-        }
+        List<MenuItem> menuItems = menuItemRepository.findAllById(request.menuId());
         cheque.setMenuItems(menuItems);
         cheque.setEmployee(employee);
         chequeRepository.save(cheque);
@@ -101,14 +97,14 @@ public class ChequeServiceImpl implements ChequeService {
             chequeResponse.setGrandTotal(cheque.getGrandTotal());
             chequeResponses.add(chequeResponse);
         }
-        return chequeResponses;
+       return chequeResponses;
     }
 
     @Override
     public Double totalSum(Long id) {
         double count = 0;
         for (Cheque cheque : chequeRepository.findAll()) {
-            if (cheque.getEmployee().getId().equals(id) ) {
+            if (cheque.getEmployee().getId().equals(id) && cheque.getCreateAt().equals(LocalDate.now())){
                 count += cheque.getGrandTotal();
             }
         }
@@ -118,6 +114,5 @@ public class ChequeServiceImpl implements ChequeService {
     @Override
     public Double avg(Long id) {
         return chequeRepository.avg(id);
-
     }
-}
+    }

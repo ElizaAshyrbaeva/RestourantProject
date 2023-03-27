@@ -41,10 +41,10 @@ public class RestaurantApi {
     public SimpleResponse deleteRest(@PathVariable Long restId){
         return service.deleteById(restId);
     }
-    @PutMapping
+    @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public SimpleResponse updateRest(@RequestBody RestaurantRequest request){
-        return service.updateRest(request);
+    public SimpleResponse updateRest(@RequestBody RestaurantRequest request ,@PathVariable  Long id){
+        return service.updateRest(id,request);
     }
 
 }

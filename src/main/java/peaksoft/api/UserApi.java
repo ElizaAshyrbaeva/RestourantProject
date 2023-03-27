@@ -1,5 +1,7 @@
 package peaksoft.api;
 
+import jakarta.annotation.security.PermitAll;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,10 +25,12 @@ public class UserApi {
     }
 
     @PostMapping
+//    @PreAuthorize("hasAuthority('ADMIN')")
     public UserResponse login(@RequestBody UserRequest userRequest) {
         return userService.authenticate(userRequest);
     }
     @PostMapping("/application")
+    @PermitAll
     public SimpleResponse application(@RequestBody EmployeeRequest employeeRequest){
         return service.acceptOrReject(employeeRequest);
     }
