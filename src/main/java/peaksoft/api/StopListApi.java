@@ -1,6 +1,7 @@
 package peaksoft.api;
 
 import jakarta.annotation.security.PermitAll;
+import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.dto.request.StopListRequest;
@@ -21,7 +22,7 @@ public class StopListApi {
 
     @PostMapping("{menuItemId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public SimpleResponse save(@RequestBody StopListRequest stopListRequest, @PathVariable Long menuItemId){
+    public SimpleResponse save(@RequestBody @Valid StopListRequest stopListRequest, @PathVariable Long menuItemId){
        return stopListService.save(menuItemId, stopListRequest);
     }
     @GetMapping
@@ -41,7 +42,7 @@ public class StopListApi {
     }
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public SimpleResponse update(@PathVariable Long id,StopListRequest listRequest){
+    public SimpleResponse update(@PathVariable @Valid Long id,StopListRequest listRequest){
         return stopListService.update(id,listRequest);
     }
 

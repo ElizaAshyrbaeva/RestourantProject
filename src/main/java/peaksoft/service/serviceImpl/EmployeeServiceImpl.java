@@ -10,6 +10,7 @@ import peaksoft.dto.response.SimpleResponse;
 import peaksoft.entity.Employee;
 import peaksoft.entity.Restaurant;
 import peaksoft.enums.Role;
+import peaksoft.exceptions.NotFoundException;
 import peaksoft.repository.EmployeeRepository;
 import peaksoft.repository.RestaurantRepository;
 import peaksoft.service.EmployeeService;
@@ -38,11 +39,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeResponse findById(Long id) {
-         return employeeRepository.findByIdEmpl(id).orElseThrow(()->new NoSuchElementException(String.format("User with email: %s doesn't exists",id)));
+         return employeeRepository.findByIdEmpl(id).orElseThrow(()->new NoSuchElementException(String.format("User with ID: %s doesn't exists",id)));
     }
 
     @Override
     public SimpleResponse deleteById(Long id) {
+        employeeRepository.findById(id).orElseThrow(()-> new NotFoundException("user with this id not found: "+ id));
         employeeRepository.deleteById(id);
         return SimpleResponse.builder().status(HttpStatus.OK).massage("Successfully delete.").build();
     }

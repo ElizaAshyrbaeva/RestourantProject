@@ -1,5 +1,6 @@
 package peaksoft.api;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class RestaurantApi {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public SimpleResponse save(@RequestBody RestaurantRequest request){
+    public SimpleResponse save(@RequestBody  @Valid RestaurantRequest request){
         return service.save(request);
     }
     @GetMapping
@@ -43,7 +44,7 @@ public class RestaurantApi {
     }
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public SimpleResponse updateRest(@RequestBody RestaurantRequest request ,@PathVariable  Long id){
+    public SimpleResponse updateRest(@RequestBody @Valid RestaurantRequest request , @PathVariable  Long id){
         return service.updateRest(id,request);
     }
 

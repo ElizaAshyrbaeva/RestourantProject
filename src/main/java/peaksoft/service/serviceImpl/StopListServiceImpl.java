@@ -8,6 +8,7 @@ import peaksoft.dto.response.SimpleResponse;
 import peaksoft.dto.response.StopListResponse;
 import peaksoft.entity.MenuItem;
 import peaksoft.entity.StopList;
+import peaksoft.exceptions.NotFoundException;
 import peaksoft.repository.MenuItemRepository;
 import peaksoft.repository.StopListRepository;
 import peaksoft.service.StopListService;
@@ -48,6 +49,7 @@ public class StopListServiceImpl implements StopListService {
     }
     @Override
     public SimpleResponse delete(Long id) {
+        repository.findById(id).orElseThrow(()->new NotFoundException("StopList with this id not found:"+id));
         repository.deleteById(id);
         return SimpleResponse.builder().status(HttpStatus.OK).massage("delete").build();
     }

@@ -1,4 +1,5 @@
 package peaksoft.api;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class CategoryApi {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public SimpleResponse save(@RequestBody  CategoryRequest request) {
+    public SimpleResponse save(@RequestBody @Valid CategoryRequest request) {
         return categoryService.saveCategory(request);
     }
     @GetMapping
@@ -40,7 +41,7 @@ public class CategoryApi {
     }
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public SimpleResponse update(@PathVariable Long id,@RequestBody CategoryRequest request){
+    public SimpleResponse update(@PathVariable Long id,@RequestBody @Valid CategoryRequest request){
        return categoryService.update(id,request);
     }
     @GetMapping("/pagination")

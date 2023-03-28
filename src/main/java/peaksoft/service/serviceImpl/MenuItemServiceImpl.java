@@ -12,6 +12,7 @@ import peaksoft.entity.MenuItem;
 import peaksoft.entity.Restaurant;
 import peaksoft.entity.StopList;
 import peaksoft.entity.SubCategory;
+import peaksoft.exceptions.NotFoundException;
 import peaksoft.repository.MenuItemRepository;
 import peaksoft.repository.RestaurantRepository;
 import peaksoft.repository.StopListRepository;
@@ -70,6 +71,7 @@ public class MenuItemServiceImpl implements MenuItemService {
 
     @Override
     public SimpleResponse delete(Long id) {
+        menuItemRepository.findById(id).orElseThrow(()->new NotFoundException("Menu with this id not found:"+id));
         menuItemRepository.deleteById(id);
         return SimpleResponse.builder().status(HttpStatus.OK).massage("Successfully deleted.!!").build();
     }

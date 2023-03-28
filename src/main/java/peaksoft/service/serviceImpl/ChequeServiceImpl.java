@@ -9,6 +9,7 @@ import peaksoft.dto.response.SimpleResponse;
 import peaksoft.entity.Cheque;
 import peaksoft.entity.Employee;
 import peaksoft.entity.MenuItem;
+import peaksoft.exceptions.NotFoundException;
 import peaksoft.repository.ChequeRepository;
 import peaksoft.repository.EmployeeRepository;
 import peaksoft.repository.MenuItemRepository;
@@ -66,6 +67,7 @@ public class ChequeServiceImpl implements ChequeService {
 
     @Override
     public SimpleResponse deleteById(Long id) {
+        chequeRepository.findById(id).orElseThrow(()->new NotFoundException("Cheque with this id not found:"+id));
         chequeRepository.deleteById(id);
         return SimpleResponse.builder().status(HttpStatus.OK).massage("gbefvbfdvrr").build();
     }

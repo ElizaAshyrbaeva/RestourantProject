@@ -1,5 +1,6 @@
 package peaksoft.api;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class ChequeApi {
     }
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public SimpleResponse save(@RequestBody ChequeRequest request){
+    public SimpleResponse save(@RequestBody @Valid ChequeRequest request){
         return chequeService.save(request);
     }
     @GetMapping("/{id}")
@@ -40,7 +41,7 @@ public class ChequeApi {
     }
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public SimpleResponse update(@PathVariable Long id,ChequeRequest request){
+    public SimpleResponse update(@PathVariable @Valid Long id,ChequeRequest request){
         return chequeService.update(id,request);
     }
 //    @PreAuthorize("hasAuthority('ADMIN')")

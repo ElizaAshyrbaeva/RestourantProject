@@ -13,7 +13,6 @@ import peaksoft.entity.User;
 import peaksoft.enums.Role;
 import peaksoft.repository.UserRepository;
 import peaksoft.service.UserService;
-
 import java.util.NoSuchElementException;
 
 @Service
@@ -23,14 +22,12 @@ public class UserServiceImpl implements UserService {
     private final JwtService jwtService;
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
-
     public UserServiceImpl(UserRepository userRepository, JwtService jwtService, PasswordEncoder encoder, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.encoder = encoder;
         this.authenticationManager = authenticationManager;
     }
-
     @Override
     public UserResponse authenticate(UserRequest userRequest) {
         authenticationManager.authenticate(
@@ -39,8 +36,6 @@ public class UserServiceImpl implements UserService {
         String token = jwtService.generateToken(user);
         return UserResponse.builder().token(token).email(user.getEmail()).build();
     }
-
-
     @PostConstruct
     public void init() {
         if (!userRepository.existsByEmail("admin@gmail.com")) {
@@ -51,7 +46,5 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
         }
     }
-
-
 }
 

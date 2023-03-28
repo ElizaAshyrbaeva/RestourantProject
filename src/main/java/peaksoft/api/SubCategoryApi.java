@@ -1,4 +1,5 @@
 package peaksoft.api;
+import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.dto.request.SubCategoryRequest;
@@ -17,8 +18,8 @@ public class SubCategoryApi {
         this.categoryService = categoryService;
     }
     @PostMapping
-//    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public SimpleResponse save(@RequestBody SubCategoryRequest category){
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public SimpleResponse save(@RequestBody @Valid SubCategoryRequest category){
         return categoryService.save(category);
     }
     @GetMapping
@@ -38,7 +39,7 @@ public class SubCategoryApi {
     }
     @PutMapping
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public SimpleResponse update(Long id,@RequestBody SubCategoryRequest categoryRequest){
+    public SimpleResponse update(Long id,@RequestBody @Valid SubCategoryRequest categoryRequest){
         return categoryService.update(id,categoryRequest);
     }
     @PreAuthorize("permitAll()")

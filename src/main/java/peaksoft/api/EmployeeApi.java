@@ -1,6 +1,7 @@
 package peaksoft.api;
 
 import jakarta.annotation.security.PermitAll;
+import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,7 @@ public class EmployeeApi {
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public SimpleResponse update(@PathVariable Long id,
-                                 @RequestBody EmployeeRequest employeeRequest) {
+                                 @RequestBody @Valid EmployeeRequest employeeRequest) {
         return service.update(id, employeeRequest);
     }
 
@@ -49,13 +50,13 @@ public class EmployeeApi {
 
     @PostMapping("/acceptOrReject")
     @PermitAll
-    SimpleResponse acceptOrReject(@RequestBody AcceptOrRejectRequest request) {
+    SimpleResponse acceptOrReject(@RequestBody @Valid AcceptOrRejectRequest request) {
         return service.acceptOrReject(request);
     }
 
     @PostMapping("/{id}/save")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public SimpleResponse save(@RequestBody EmployeeRequest employeeRequest,
+    public SimpleResponse save(@RequestBody @Valid EmployeeRequest employeeRequest,
                                @PathVariable Long id) {
         return service.save(employeeRequest, id);
     }

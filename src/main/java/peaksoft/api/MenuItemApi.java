@@ -1,6 +1,7 @@
 package peaksoft.api;
 
 import jakarta.annotation.security.PermitAll;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class MenuItemApi {
     }
     @PreAuthorize("hasAnyAuthority('ADMIN','CHEF')")
     @PostMapping
-    public SimpleResponse save(@RequestBody MenuItemRequest request){
+    public SimpleResponse save(@RequestBody @Valid MenuItemRequest request){
         return service.save(request);
     }
     @PreAuthorize("permitAll()")
@@ -39,7 +40,7 @@ public class MenuItemApi {
     }
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PutMapping("/{id}")
-    public SimpleResponse update(@PathVariable Long id,@RequestBody MenuItemRequest request){
+    public SimpleResponse update(@PathVariable Long id,@RequestBody @Valid MenuItemRequest request){
         return service.update(id,request);
     }
 //    @PreAuthorize("hasAnyAuthority('ADMIN','CHEF')")
@@ -69,5 +70,9 @@ public class MenuItemApi {
                                           @RequestParam int size) {
         return service.getItemPagination(page, size);
     }
-
+    @GetMapping("/get")
+    @PermitAll
+    public List<MenuItemResponse>getAll(){
+        return service.getAll();
+    }
 }

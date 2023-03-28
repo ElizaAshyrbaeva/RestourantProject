@@ -10,6 +10,7 @@ import peaksoft.dto.response.CategoryResponse;
 import peaksoft.dto.response.PaginationResponse;
 import peaksoft.dto.response.SimpleResponse;
 import peaksoft.entity.Category;
+import peaksoft.exceptions.NotFoundException;
 import peaksoft.repository.CategoryRepository;
 import peaksoft.service.CategoryService;
 import java.awt.print.Pageable;
@@ -45,6 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public SimpleResponse deleteById(Long id) {
+        repository.findById(id).orElseThrow(()->new NotFoundException("Category with this id not found:"+id));
         repository.deleteById(id);
         return SimpleResponse.builder().status(HttpStatus.OK).massage("Successfully delete.").build();
     }

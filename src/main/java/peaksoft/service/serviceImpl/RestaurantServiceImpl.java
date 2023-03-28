@@ -64,6 +64,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public SimpleResponse deleteById(Long id) {
+        repository.findById(id).orElseThrow(()->new NotFoundException("dsvvrds"));
         repository.deleteById(id);
         return SimpleResponse.builder().status(HttpStatus.OK).massage("Delete!!!").build();
     }

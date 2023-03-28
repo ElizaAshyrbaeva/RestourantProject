@@ -10,6 +10,7 @@ import peaksoft.dto.response.SubCategoryByCategory;
 import peaksoft.dto.response.SubCategoryResponse;
 import peaksoft.entity.Category;
 import peaksoft.entity.SubCategory;
+import peaksoft.exceptions.NotFoundException;
 import peaksoft.repository.CategoryRepository;
 import peaksoft.repository.SubcategoryRepository;
 import peaksoft.service.SubCategoryService;
@@ -56,6 +57,7 @@ public class SubCategoryImpl implements SubCategoryService {
     }
     @Override
     public SimpleResponse delete(Long id) {
+        repository.findById(id).orElseThrow(()->new NotFoundException("SubCategory with this id not found:"+id));
         repository.deleteById(id);
         return SimpleResponse.builder().status(HttpStatus.OK).massage("Successfully delete...").build();
     }

@@ -1,6 +1,9 @@
 package peaksoft.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 @Builder
-public record CategoryRequest(String name) {
+public record CategoryRequest(
+        @NotNull
+        String name) {
 }
