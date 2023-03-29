@@ -31,5 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
-/.idea resources/application.properties
+/.idea main/resources/application.properties
 /.mvn
