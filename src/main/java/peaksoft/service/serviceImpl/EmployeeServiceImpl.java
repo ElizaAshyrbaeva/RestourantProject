@@ -5,7 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import peaksoft.dto.request.AcceptOrRejectRequest;
 import peaksoft.dto.request.EmployeeRequest;
-import peaksoft.dto.response.EmployeeResponse;
+import peaksoft.dto.response.EmployeeAllResponse;
 import peaksoft.dto.response.SimpleResponse;
 import peaksoft.entity.Employee;
 import peaksoft.entity.Restaurant;
@@ -14,9 +14,7 @@ import peaksoft.exceptions.NotFoundException;
 import peaksoft.repository.EmployeeRepository;
 import peaksoft.repository.RestaurantRepository;
 import peaksoft.service.EmployeeService;
-
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -33,13 +31,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         this.repository = repository;
     }
     @Override
-    public List<EmployeeResponse> getAll() {
+    public List<EmployeeAllResponse> getAll() {
         return employeeRepository.getAllEmpl(true);
     }
 
     @Override
-    public EmployeeResponse findById(Long id) {
-         return employeeRepository.findByIdEmpl(id).orElseThrow(()->new NoSuchElementException(String.format("User with ID: %s doesn't exists",id)));
+    public EmployeeAllResponse findById(Long id) {
+         return employeeRepository.findByIdEmpl(id).orElseThrow(()->new NotFoundException(String.format("User with ID: %s doesn't exists",id)));
     }
 
     @Override
@@ -57,9 +55,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (employeeRepository.existsByEmail(request.email())) {
             return SimpleResponse.builder().status(HttpStatus.CONFLICT).massage(String.format("User with email: %s already exists!", request.email())).build();
         }
+        int age = LocalDate.now().minusYears(request.dateOfBirth().getYear()).getYear();
+
         if (request.role().equals(Role.CHEF)) {
-            Period period = Period.between(request.dateOfBirth(), LocalDate.now());
-            if (period.getYears() < 25 || period.getYears() > 45) {
+            if (age < 25 || age > 45) {
                 return SimpleResponse.builder().status(HttpStatus.BAD_REQUEST).massage(String.format("For the vacancy of a cook, the age range is from 25 to 45 years!"+ Role.CHEF)).build();
             }
             if (request.experience() <= 2) {
@@ -68,8 +67,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         if (request.role().equals(Role.WAITER)) {
-            Period period = Period.between(request.dateOfBirth(), LocalDate.now());
-            if (period.getYears() < 18 || period.getYears() > 30) {
+            if (age < 18 || age > 30) {
                 return SimpleResponse.builder().status(HttpStatus.BAD_REQUEST).massage(String.format("For the vacancy of a cook, the age range is from 18 to 30 years!" + Role.WAITER)).build();
             }
             if (request.experience() <= 1) {
@@ -92,14 +90,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public SimpleResponse acceptOrReject(EmployeeRequest request) {
         if (request.role().equals(Role.ADMIN)) {
-            return SimpleResponse.builder().status(HttpStatus.FORBIDDEN).massage("Not Your Level Dear").build();
+            return SimpleResponse.builder().status(HttpStatus.BAD_REQUEST).massage("Not Your Level Dear").build();
         }
         if (employeeRepository.existsByEmail(request.email())) {
             return SimpleResponse.builder().status(HttpStatus.CONFLICT).massage(String.format("User with email: %s already exists!", request.email())).build();
         }
+        int age = LocalDate.now().minusYears(request.dateOfBirth().getYear()).getYear();
+
         if (request.role().equals(Role.CHEF)) {
-            Period period = Period.between(request.dateOfBirth(), LocalDate.now());
-            if (period.getYears() < 25 || period.getYears() > 45) {
+            if (age < 25 || age> 45) {
                 return SimpleResponse.builder().status(HttpStatus.BAD_REQUEST).massage(String.format("For the vacancy of a cook, the age range is from 25 to 45 years!"+ Role.CHEF)).build();
             }
             if (request.experience() <= 2) {
@@ -108,8 +107,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         if (request.role().equals(Role.WAITER)) {
-            Period period = Period.between(request.dateOfBirth(), LocalDate.now());
-            if (period.getYears() < 18 || period.getYears() > 30) {
+            if (age < 18 || age > 30) {
                 return SimpleResponse.builder().status(HttpStatus.BAD_REQUEST).massage(String.format("For the vacancy of a cook, the age range is from 18 to 30 years!"+Role.WAITER)).build();
             }
             if (request.experience() <= 1) {
@@ -155,12 +153,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeResponse> getApplications() {
+    public List<EmployeeAllResponse> getApplications() {
         return employeeRepository.getAllEmpl(false);
     }
 
     @Override
-    public List<EmployeeResponse> findAll() {
+    public List<EmployeeAllResponse> findAll() {
         return employeeRepository.getAll();
     }
 
@@ -174,27 +172,26 @@ public class EmployeeServiceImpl implements EmployeeService {
             return SimpleResponse.builder().status(HttpStatus.FORBIDDEN).massage("Not Your Level Dear").build();
         }
         if (employeeRepository.existsByEmail(request.email())) {
-            return SimpleResponse.builder().status(HttpStatus.CONFLICT).massage(String.format("User with email: %s already exists!"+request.email())).build();
+            return SimpleResponse.builder().status(HttpStatus.CONFLICT).massage(String.format("User with email: %s already exists!",request.email())).build();
         }
+        int age = LocalDate.now().minusYears(request.dateOfBirth().getYear()).getYear();
         if (request.role().equals(Role.CHEF)) {
-            Period period = Period.between(request.dateOfBirth(), LocalDate.now());
-            if (period.getYears() < 25 || period.getYears() > 45) {
+            if (age < 25 || age > 45) {
                 return SimpleResponse.builder().status(HttpStatus.BAD_REQUEST).massage(String.format("For the vacancy of a cook, the age range is from 25 to 45 years!"+ Role.CHEF)).build();
             }
             if (request.experience() <= 2) {
                 return SimpleResponse.builder().status(HttpStatus.BAD_REQUEST).massage(String.format("Cooking experience must be at least 2 years!"+request.experience())).build();
             }
         }
-
         if (request.role().equals(Role.WAITER)) {
-            Period period = Period.between(request.dateOfBirth(), LocalDate.now());
-            if (period.getYears() < 18 || period.getYears() > 30) {
+            if (age < 18 || age > 30) {
                 return SimpleResponse.builder().status(HttpStatus.BAD_REQUEST).massage(String.format("For the vacancy of a cook, the age range is from 18 to 30 years!"+ Role.WAITER)).build();
             }
             if (request.experience() <= 1) {
                 return SimpleResponse.builder().status(HttpStatus.BAD_REQUEST).massage(String.format("Cooking experience must be at least 1 years!"+request.experience())).build();
             }
         }
+        int count = restaurant.getEmployees().size();
         Employee employee = new Employee();
         employee.setFirstName(request.firstName());
         employee.setLastName(request.lastName());
@@ -205,10 +202,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setPhoneNumber(request.phoneNumber());
         employee.setExperience(request.experience());
         employee.setRestaurant(restaurant);
+        restaurant.setNumberOfEmployees(++count);
         employee.setAccepted(true);
          employeeRepository.save(employee);
          return SimpleResponse.builder().status(HttpStatus.OK).
-                massage("Successfully saved"+" "+request.lastName()).build();
+                massage("Successfully saved name "+request.lastName()).build();
 
     }
 

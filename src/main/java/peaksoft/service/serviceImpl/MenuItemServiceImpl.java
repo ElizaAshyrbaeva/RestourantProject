@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import peaksoft.dto.request.MenuItemRequest;
@@ -20,6 +21,7 @@ import peaksoft.repository.SubcategoryRepository;
 import peaksoft.service.MenuItemService;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -43,6 +45,9 @@ public class MenuItemServiceImpl implements MenuItemService {
     @Override
     @Transactional
     public SimpleResponse save(MenuItemRequest request) {
+        if (subcategoryRepository.existsByName(request.name())){
+            return SimpleResponse.builder().status(HttpStatus.CONFLICT).massage("Given name already exists!").build();
+        }
         SubCategory subCategory = subcategoryRepository.findById(request.subCategoryId()).orElseThrow(() -> new NoSuchElementException("Not fount"));
         Restaurant restaurant = repository.findById(request.restId()).orElseThrow(() -> new NoSuchElementException("NOd found"));
         MenuItem menuItem = new MenuItem();
@@ -91,13 +96,11 @@ public class MenuItemServiceImpl implements MenuItemService {
 
     @Override
     public List<MenuItemResponse> sort(String sort) {
-        if (sort.equalsIgnoreCase("asc")) {
-            return menuItemRepository.sortByAsc();
-        } else if (sort.equalsIgnoreCase("desc")) {
-            return menuItemRepository.sortByDesc();
-        } else {
-            return getAll();
-        }
+        return switch (sort) {
+            case "asc" -> menuItemRepository.sortByAsc();
+            case "desc" -> menuItemRepository.sortByDesc();
+            default -> menuItemRepository.getAllMenu();
+        };
     }
 
     @Override
@@ -109,34 +112,42 @@ public class MenuItemServiceImpl implements MenuItemService {
     @Override
     public List<MenuItemResponse> globalSearch(String word) {
         LocalDate date=LocalDate.now();
-        if (word==null){
-            for (StopList stopList : stopListRepository.findAll()) {
-                 if(stopList.getDate().equals(date)){
-                    stopList.getMenuitem().setInStock(false);
-                    stopListRepository.save(stopList);
-                } else {
-                    stopList.getMenuitem().setInStock(true);
-                    stopListRepository.save(stopList);
-                }
-            }
+//        if (word==null){
+//            for (StopList stopList : stopListRepository.findAll()) {
+//                if(stopList.getDate().equals(date)){
+//                    stopList.getMenuitem().setInStock(false);
+//                    stopListRepository.save(stopList);
+//                } else {
+//                    stopList.getMenuitem().setInStock(true);
+//                    stopListRepository.save(stopList);
+//                }
+//            }
+//            return menuItemRepository.getAllMenu();
+//        } else {
+//            return menuItemRepository.globalSearch(word);
+        LocalDate currentDate = LocalDate.now();
+        if (word == null) {
+            stopListRepository.findAll().forEach(stop -> {
+                stop.getMenuitem().setInStock(!stop.getDate().equals(currentDate));
+                // TODO if date is current it's going to false
+                stopListRepository.save(stop);
+            });
             return menuItemRepository.getAllMenu();
-        } else {
-            return menuItemRepository.globalSearch(word);
+        }
+        return menuItemRepository.globalSearch(word);
 
-            }
-    }
+        }
 
     @Override
     public PaginationResponse getItemPagination(int page, int size) {
-        Pageable pageable = PageRequest.of(page-1,size);
+        Pageable pageable = PageRequest.of(page - 1, size);
         Page<MenuItemResponse> pagedItems = menuItemRepository.findAllBy(pageable);
-        List<MenuItemResponse> paged = pagedItems.getContent().stream().map(menuItem->new MenuItemResponse(
-                menuItem.id(),menuItem.name(),menuItem.image(),menuItem.price(),menuItem.description(),menuItem.isVegetarian())).toList();
+        List<MenuItemResponse> paged = pagedItems.getContent().stream().map(menuItem -> new MenuItemResponse(
+                menuItem.id(), menuItem.name(), menuItem.image(), menuItem.price(), menuItem.description(), menuItem.isVegetarian())).toList();
         PaginationResponse paginationResponse = new PaginationResponse();
         paginationResponse.setGetAll(paged);
         paginationResponse.setCurrentPage(pageable.getPageNumber());
         paginationResponse.setPageSize(pagedItems.getTotalPages());
         return paginationResponse;
     }
-}
-
+ }

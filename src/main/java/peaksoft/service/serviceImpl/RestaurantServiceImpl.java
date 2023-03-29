@@ -25,16 +25,16 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public SimpleResponse save(RestaurantRequest request) {
+        if (repository.existsByName(request.name())){
+            return SimpleResponse.builder().status(HttpStatus.CONFLICT).massage("Given name is already exists!").build();
+        }
         Restaurant restaurant = new Restaurant();
-        if (request.name() != null && request.name().length() > 4) {
             restaurant.setName(request.name());
             restaurant.setLocation(request.location());
             restaurant.setRestType(request.restType());
             restaurant.setService(request.service());
             repository.save(restaurant);
             return SimpleResponse.builder().status(HttpStatus.OK).massage(request.name() + " " + "Successfully saved!!").build();
-        }
-        return null;
     }
 
     @Override
@@ -56,15 +56,14 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public RestaurantResponse getById(Long id) {
-        Restaurant restaurant = repository.findById(id).orElseThrow(() -> new NullPointerException("Not found!!!"));
+        Restaurant restaurant = repository.findById(id).orElseThrow(() -> new NullPointerException("Restaurant with this id not found:"+id));
         restaurant.setNumberOfEmployees(restaurant.getEmployees().size());
         repository.save(restaurant);
-        return repository.getByRestId(id).orElseThrow(() -> new NoSuchElementException("Not found!!!"));
+        return repository.getByRestId(id).orElseThrow(() -> new NoSuchElementException("Restaurant with this id not found:"+id));
     }
-
     @Override
     public SimpleResponse deleteById(Long id) {
-        repository.findById(id).orElseThrow(()->new NotFoundException("dsvvrds"));
+        repository.findById(id).orElseThrow(()->new NotFoundException("Restaurant with this id not found:"+id));
         repository.deleteById(id);
         return SimpleResponse.builder().status(HttpStatus.OK).massage("Delete!!!").build();
     }

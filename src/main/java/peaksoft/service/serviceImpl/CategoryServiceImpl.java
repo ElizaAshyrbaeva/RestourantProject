@@ -10,6 +10,7 @@ import peaksoft.dto.response.CategoryResponse;
 import peaksoft.dto.response.PaginationResponse;
 import peaksoft.dto.response.SimpleResponse;
 import peaksoft.entity.Category;
+import peaksoft.exceptions.AlreadyExistException;
 import peaksoft.exceptions.NotFoundException;
 import peaksoft.repository.CategoryRepository;
 import peaksoft.service.CategoryService;
@@ -29,11 +30,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public SimpleResponse saveCategory(CategoryRequest request) {
-        Category category = new Category();
-        category.setName(request.name());
-        repository.save(category);
-        return SimpleResponse.builder().status(HttpStatus.OK).massage("Successfully saved..").build();
-    }
+        if (repository.existsByName(request.name())) {
+            return SimpleResponse.builder().status(HttpStatus.CONFLICT).massage("Given name  is already exists!").build();
+        }
+            Category category = new Category();
+            category.setName(request.name());
+            repository.save(category);
+            return SimpleResponse.builder().status(HttpStatus.OK).massage("Successfully saved..").build();
+        }
     @Override
     public List<CategoryResponse> getAll() {
         return repository.getAllCategory();

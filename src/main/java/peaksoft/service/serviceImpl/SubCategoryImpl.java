@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import peaksoft.dto.request.SubCategoryRequest;
 import peaksoft.dto.response.SimpleResponse;
-import peaksoft.dto.response.SubCategoryByCategory;
 import peaksoft.dto.response.SubCategoryResponse;
 import peaksoft.entity.Category;
 import peaksoft.entity.SubCategory;
@@ -34,6 +33,9 @@ public class SubCategoryImpl implements SubCategoryService {
 
     @Override
     public SimpleResponse save(SubCategoryRequest request) {
+        if (repository.existsByName(request.name())){
+            return SimpleResponse.builder().status(HttpStatus.CONFLICT).massage("Given name is already exists!").build();
+        }
         Category category = categoryRepository.findById(request.categoryId()).orElseThrow(() -> new NoSuchElementException("NOT FOUND.."));
         SubCategory subCategory = new SubCategory();
         subCategory.setName(request.name());

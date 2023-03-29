@@ -22,7 +22,7 @@ public class ChequeApi {
     @GetMapping
     @PreAuthorize("permitAll()")
     public List<ChequeResponse>getAll(){
-       return chequeService.findAll();
+       return chequeService.getAll();
     }
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -32,7 +32,7 @@ public class ChequeApi {
     @GetMapping("/{id}")
     @PreAuthorize("permitAll()")
     public ChequeResponse findById(@PathVariable Long id){
-        return chequeService.findById(id);
+        return chequeService.getById(id);
     }
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -47,11 +47,11 @@ public class ChequeApi {
 //    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/total/{id}")
     public Double totalSum(@PathVariable Long id){
-        return chequeService.totalSum(id);
+        return chequeService.getAllChequesByUser(id);
     }
 //    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/avg/{id}")
     public Double avg(@PathVariable Long id){
-        return chequeService.avg(id);
+        return chequeService.getAverageSum(id);
     }
 }

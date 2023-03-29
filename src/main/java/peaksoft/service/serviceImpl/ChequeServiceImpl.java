@@ -1,14 +1,14 @@
 package peaksoft.service.serviceImpl;
 
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import peaksoft.dto.request.ChequeRequest;
 import peaksoft.dto.response.ChequeResponse;
 import peaksoft.dto.response.SimpleResponse;
-import peaksoft.entity.Cheque;
-import peaksoft.entity.Employee;
-import peaksoft.entity.MenuItem;
+import peaksoft.entity.*;
 import peaksoft.exceptions.NotFoundException;
 import peaksoft.repository.ChequeRepository;
 import peaksoft.repository.EmployeeRepository;
@@ -17,104 +17,138 @@ import peaksoft.service.ChequeService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class ChequeServiceImpl implements ChequeService {
     private final ChequeRepository chequeRepository;
     private final EmployeeRepository employeeRepository;
-    private final MenuItemRepository menuItemRepository;
+    private final MenuItemRepository menuItemRepo;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChequeServiceImpl.class);
 
-    public ChequeServiceImpl(ChequeRepository chequeRepository, EmployeeRepository employeeRepository, MenuItemRepository menuItemRepository) {
+    public ChequeServiceImpl(ChequeRepository chequeRepository, EmployeeRepository employeeRepository, MenuItemRepository menuItemRepo) {
         this.chequeRepository = chequeRepository;
         this.employeeRepository = employeeRepository;
-        this.menuItemRepository = menuItemRepository;
+        this.menuItemRepo = menuItemRepo;
     }
 
     @Override
-    public SimpleResponse save(ChequeRequest request) {
-        double count = 0;
-        Employee employee = employeeRepository.findById(request.userId()).orElseThrow(() -> new NoSuchElementException("not found"));
-        Cheque cheque = new Cheque();
-        cheque.setEmployee(employee);
-        for (MenuItem menuItem : menuItemRepository.findAllById(request.menuId())) {
-            cheque.addMenu(menuItem);
-            count += menuItem.getPrice();
+    public SimpleResponse save(ChequeRequest request) throws NotFoundException {
+        Employee employee = employeeRepository.findById(request.userId())
+                .orElseThrow(() -> new NotFoundException("Cheque with this id : " + request.userId() + " was not found!"));
+
+        List<MenuItem> menuItems = new ArrayList<>();
+
+        for (Long id : request.menuId()) {
+            MenuItem menuItem = menuItemRepo.findById(id)
+                    .orElseThrow(() -> new NotFoundException("Menu item with this id " + id + " was not found!"));
+            menuItems.add(menuItem);
         }
+
+
+        double count = menuItems.stream().mapToDouble(MenuItem::getPrice).sum();
+        double servicePercentage = employee.getRestaurant().getService();
+        double total = count + (count * servicePercentage / 100);
+        LocalDate createdAt = LocalDate.now();
+
+        Cheque cheque = new Cheque();
         cheque.setPriceAverage(count);
         cheque.setCreateAt(LocalDate.now());
-        double total = (count * cheque.getEmployee().getRestaurant().getService()) / 100;
-        cheque.setGrandTotal(total+total);
-        chequeRepository.save(cheque);
-        return SimpleResponse.builder().status(HttpStatus.OK).massage("Cheque is saved!").build();
-    }
-
-    @Override
-    public ChequeResponse findById(Long id) {
-        Cheque cheque = chequeRepository.findById(id).orElseThrow(() -> new NoSuchElementException(String.format("Cheque with id: %s not found!", id)));
-        ChequeResponse chequeResponse = new ChequeResponse();
-        chequeResponse.setId(cheque.getId());
-        chequeResponse.setFullName(cheque.getEmployee().getFirstName() + cheque.getEmployee().getLastName());
-        chequeResponse.setItems(cheque.getMenuItems());
-        chequeResponse.setAveragePrice(cheque.getPriceAverage());
-        chequeResponse.setService(cheque.getEmployee().getRestaurant().getService());
-        chequeResponse.setGrandTotal(cheque.getGrandTotal());
-        return chequeResponse;
-    }
-
-
-    @Override
-    public SimpleResponse deleteById(Long id) {
-        chequeRepository.findById(id).orElseThrow(()->new NotFoundException("Cheque with this id not found:"+id));
-        chequeRepository.deleteById(id);
-        return SimpleResponse.builder().status(HttpStatus.OK).massage("gbefvbfdvrr").build();
-    }
-
-    @Override
-    public SimpleResponse update(Long id, ChequeRequest request) {
-        Cheque cheque = chequeRepository.findById(id).orElseThrow(() -> new NoSuchElementException(String.format("Cheque with  id: %s not found", id)));
-        Employee employee = employeeRepository.findById(request.userId()).orElseThrow(() -> new NoSuchElementException("Employee Not Fount!"));
-        List<MenuItem> menuItems = menuItemRepository.findAllById(request.menuId());
-        cheque.setMenuItems(menuItems);
+        cheque.setGrandTotal(count + total);
+        cheque.setCreateAt(createdAt);
         cheque.setEmployee(employee);
+        cheque.setMenuItems(menuItems);
         chequeRepository.save(cheque);
+
         return SimpleResponse.builder()
                 .status(HttpStatus.OK)
-                .massage(String.format("Cheque with id : %s successfully update", id)).build();
+                .massage("Cheque with id: " + cheque.getId() + " is saved!")
+                .build();
     }
 
+
     @Override
-    public List<ChequeResponse> findAll() {
+    public List<ChequeResponse> getAll() {
         List<Cheque> cheques = chequeRepository.findAll();
         List<ChequeResponse> chequeResponses = new ArrayList<>();
-        ChequeResponse chequeResponse = new ChequeResponse();
         for (Cheque cheque : cheques) {
-            chequeResponse.setId(cheque.getId());
-            chequeResponse.setFullName(cheque.getEmployee().getFirstName() + cheque.getEmployee().getLastName());
-            chequeResponse.setItems(cheque.getMenuItems());
-            chequeResponse.setAveragePrice(cheque.getPriceAverage());
-            chequeResponse.setService(cheque.getEmployee().getRestaurant().getService());
-            chequeResponse.setGrandTotal(cheque.getGrandTotal());
+            ChequeResponse chequeResponse = new ChequeResponse(
+                    cheque.getId(),
+                    cheque.getEmployee().getFirstName() + " " + cheque.getEmployee().getLastName(),
+                    cheque.getMenuItems().stream().map(MenuItem::getName).collect(Collectors.toList()),
+                    cheque.getCreateAt(),
+                    cheque.getPriceAverage(),
+                    cheque.getEmployee().getRestaurant().getService(),
+                    cheque.getGrandTotal()
+            );
             chequeResponses.add(chequeResponse);
         }
-       return chequeResponses;
+        return chequeResponses;
     }
 
     @Override
-    public Double totalSum(Long id) {
-        double count = 0;
-        for (Cheque cheque : chequeRepository.findAll()) {
-            if (cheque.getEmployee().getId().equals(id) && cheque.getCreateAt().equals(LocalDate.now())){
-                count += cheque.getGrandTotal();
-            }
+    public ChequeResponse getById(Long id) throws NotFoundException {
+        Cheque che = chequeRepository.findById(id).orElseThrow(() -> new NotFoundException("Cheque with this id : " + id + " was not found!"));
+        List<String> stringMenuItems = new ArrayList<>();
+        for (MenuItem menuItem : che.getMenuItems()) {
+            stringMenuItems.add(menuItem.getName());
         }
-        return count;
+        return new ChequeResponse(
+                che.getId(),
+                che.getEmployee().getFirstName(),
+                stringMenuItems,
+                che.getCreateAt(),
+                che.getPriceAverage(),
+                che.getEmployee().getRestaurant().getService(),
+                che.getGrandTotal());
+    }
+
+
+    @Transactional
+    @Override
+    public SimpleResponse update(Long id, ChequeRequest request) throws NotFoundException {
+        Cheque cheque = chequeRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Cheque with this id : " + id + " was not found!"));
+        Employee employee = employeeRepository.findById(request.userId())
+                .orElseThrow(() -> new NotFoundException("User with this id : " + id + " was not found!"));
+        List<MenuItem> menuItems = new ArrayList<>();
+        LOGGER.debug("Updating cheque with ID {}", id);
+        for (Long menuItemId : request.menuId()) {
+            MenuItem menuItem = menuItemRepo.findById(menuItemId)
+                    .orElseThrow(() -> new NotFoundException("MenuItem with this id : " + id + " was not found!"));
+            menuItems.add(menuItem);
+        }
+
+        cheque.setMenuItems(menuItems.size() != 0 ? menuItems : cheque.getMenuItems());
+        cheque.setEmployee(employee != null ? employee : cheque.getEmployee());
+        chequeRepository.save(cheque);
+        return SimpleResponse.builder().status(HttpStatus.OK).massage("Cheque with id: " + cheque.getId() + " is successfully updated!").build();
     }
 
     @Override
-    public Double avg(Long id) {
-        return chequeRepository.avg(id);
+    public SimpleResponse deleteById(Long id) throws NotFoundException {
+        Cheque cheque = chequeRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Cheque was not found!"));
+        chequeRepository.delete(cheque);
+        return SimpleResponse.builder().status(HttpStatus.NO_CONTENT).massage("Cheque with id: " + id + " is successfully deleted!!").build();
     }
+
+    @Override
+    public Double getAllChequesByUser(Long userId) {
+        LocalDate today = LocalDate.now();
+        DoubleSummaryStatistics stats = chequeRepository.findAll()
+                .stream()
+                .filter(cheque -> cheque.getEmployee().getId().equals(userId) && cheque.getCreateAt().equals(today))
+                .mapToDouble(Cheque::getGrandTotal)
+                .summaryStatistics();
+        return stats.getSum();
     }
+
+    @Override
+    public Double getAverageSum(Long restId) {
+        return chequeRepository.avg(restId);
+    }
+}

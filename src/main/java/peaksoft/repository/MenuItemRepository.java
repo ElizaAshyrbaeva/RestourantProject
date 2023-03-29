@@ -8,7 +8,7 @@ import peaksoft.entity.MenuItem;
 import java.util.List;
 import java.util.Optional;
 public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
-    @Query("select new peaksoft.dto.response.MenuItemResponse(m.id,m.name,m.image,m.price,m.description,m.isVegetarian)from MenuItem m")
+    @Query("select new peaksoft.dto.response.MenuItemResponse(m.id,m.name,m.image,m.price,m.description,m.isVegetarian)from MenuItem m where m.inStock=true")
     List<MenuItemResponse> getAllMenu();
     @Query("select new peaksoft.dto.response.MenuItemResponse(m.id,m.name,m.image,m.price,m.description,m.isVegetarian)from MenuItem m where m.id=:id")
     Optional<MenuItemResponse>findByIdMenu(Long id);
@@ -21,6 +21,6 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
             "from MenuItem m where  m.inStock=true or lower(m.name) ilike lower(concat('%',:word,'%')) or  lower(m.subcategory.name)ilike lower(concat('%',:word,'%')) " +
             "or lower(m.subcategory.categories.name) ilike lower(concat('%',:word,'%') ) ")
     List<MenuItemResponse>globalSearch(String word);
-    List<MenuItemResponse> findMenuItemByIsVegetarian(boolean isTrue);
     Page<MenuItemResponse> findAllBy(Pageable pageable);
+
 }

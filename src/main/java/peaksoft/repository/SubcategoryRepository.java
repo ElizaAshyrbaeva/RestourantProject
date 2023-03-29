@@ -18,6 +18,5 @@ public interface SubcategoryRepository extends JpaRepository<SubCategory, Long> 
     List<SubCategoryResponse> orderByName(String word);
 
 
-
-
+    boolean existsByName(String name);
 }

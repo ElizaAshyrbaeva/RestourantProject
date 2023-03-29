@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.dto.request.AcceptOrRejectRequest;
 import peaksoft.dto.request.EmployeeRequest;
+import peaksoft.dto.response.EmployeeAllResponse;
 import peaksoft.dto.response.EmployeeResponse;
 import peaksoft.dto.response.SimpleResponse;
 import peaksoft.service.EmployeeService;
@@ -25,7 +26,7 @@ public class EmployeeApi {
 
     @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
-    public EmployeeResponse findById(@PathVariable Long id) {
+    public EmployeeAllResponse findById(@PathVariable Long id) {
         return service.findById(id);
     }
 
@@ -44,7 +45,7 @@ public class EmployeeApi {
 
     @GetMapping("/applications")
     @PreAuthorize("hasAuthority('ADMIN')")
-    List<EmployeeResponse> getApplications() {
+    List<EmployeeAllResponse> getApplications() {
         return service.getApplications();
     }
 
@@ -63,7 +64,7 @@ public class EmployeeApi {
 
     @GetMapping
     @PermitAll
-    public List<EmployeeResponse> findAll(){
+    public List<EmployeeAllResponse> findAll(){
         return service.getAll();
     }
 }

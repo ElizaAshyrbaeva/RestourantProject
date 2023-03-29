@@ -12,13 +12,13 @@ import java.util.Optional;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-    @Query("select new peaksoft.dto.response.EmployeeResponse(e.id,concat(e.firstName,' ',e.lastName) ,e.dateOfBirth,e.email,e.password,e.phoneNumber,e.role,e.experience)from  Employee e where e.accepted = ?1")
-    List<EmployeeResponse>getAllEmpl(boolean isTrue);
-    @Query("select new peaksoft.dto.response.EmployeeResponse(e.id,concat(e.firstName,' ',e.lastName) ,e.dateOfBirth,e.email,e.password,e.phoneNumber,e.role,e.experience)from  Employee e ")
-    List<EmployeeResponse>getAll();
+    @Query("select new peaksoft.dto.response.EmployeeAllResponse(e.id,concat(e.firstName,' ',e.lastName) ,e.dateOfBirth,e.email,e.role)from  Employee e where e.accepted = ?1")
+    List<EmployeeAllResponse>getAllEmpl(boolean isTrue);
+    @Query("select new peaksoft.dto.response.EmployeeAllResponse(e.id,concat(e.firstName,' ',e.lastName) ,e.dateOfBirth,e.email,e.role)from  Employee e ")
+    List<EmployeeAllResponse>getAll();
 
-    @Query("select new peaksoft.dto.response.EmployeeResponse(e.id,concat(e.firstName,' ',e.lastName) ,e.dateOfBirth,e.email,e.password,e.phoneNumber,e.role,e.experience)from Employee e where e.id=:id")
-    Optional<EmployeeResponse> findByIdEmpl(Long id);
+    @Query("select new peaksoft.dto.response.EmployeeAllResponse(e.id,concat(e.firstName,' ',e.lastName) ,e.dateOfBirth,e.email,e.role)from Employee e where e.id=:id")
+    Optional<EmployeeAllResponse> findByIdEmpl(Long id);
     boolean existsByEmail(String email);
 
 }

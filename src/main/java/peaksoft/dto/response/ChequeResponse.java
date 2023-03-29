@@ -3,17 +3,18 @@ import lombok.Builder;
 import lombok.Data;
 import peaksoft.entity.MenuItem;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-@Data
-public class ChequeResponse {
-    private Long id;
-    private String fullName;
-    private List<MenuItem> items;
-    private double averagePrice;
-    private double service;
-    private double grandTotal;
+@Builder
+public record ChequeResponse(  Long checkId,
+                               String user,
+                               List<String> menuItems,
+                               LocalDate createdAt,
+                               double priceAverage,
+                               double service,
+                               double total) {
 
 
 }

@@ -3,19 +3,22 @@ package peaksoft.service;
 import peaksoft.dto.request.ChequeRequest;
 import peaksoft.dto.response.ChequeResponse;
 import peaksoft.dto.response.SimpleResponse;
+import peaksoft.exceptions.NotFoundException;
 
 import java.util.List;
 
 public interface ChequeService {
-    SimpleResponse save(ChequeRequest request);
+    SimpleResponse save(ChequeRequest request) throws NotFoundException;
 
-    ChequeResponse findById(Long id);
+    List<ChequeResponse> getAll();
 
-    SimpleResponse deleteById(Long id);
+    ChequeResponse getById(Long id) throws NotFoundException;
 
-    SimpleResponse update(Long id, ChequeRequest request);
+    SimpleResponse update(Long id, ChequeRequest request) throws NotFoundException;
 
-    List<ChequeResponse> findAll();
-    Double totalSum(Long id);
+    SimpleResponse deleteById(Long id) throws NotFoundException;
 
-    Double avg(Long id);}
+    Double getAllChequesByUser(Long userId);
+
+    Double getAverageSum(Long restId);
+}

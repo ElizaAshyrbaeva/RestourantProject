@@ -29,10 +29,10 @@ public class StopListServiceImpl implements StopListService {
     @Override
     public SimpleResponse save(Long id,StopListRequest request) {
         MenuItem menuItem = menuItemRepository.findById(id).orElseThrow(() ->
-                new NoSuchElementException("not found"));
+                new NoSuchElementException("MenuItem id nod found!"));
         boolean exists = repository.existsByMenuitem(menuItem);
         if (exists && menuItem.getList().getDate().equals(request.date())){
-            return SimpleResponse.builder().status(HttpStatus.CONFLICT).massage(String.format("bbds"+menuItem.getName())).build();
+            return SimpleResponse.builder().status(HttpStatus.CONFLICT).massage(String.format("Mindai tamak jok"+menuItem.getName())).build();
         }
             StopList stopList = new StopList();
             stopList.setReason(request.reason());

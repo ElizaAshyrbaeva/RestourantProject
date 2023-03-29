@@ -16,6 +16,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<CategoryResponse> getAllCategory();
     @Query("select new peaksoft.dto.response.CategoryResponse(c.id,c.name) from  Category c where c.id=:id")
     Optional<CategoryResponse>getByIdCategory(Long id);
+    boolean existsByName(String name);
 
 
 }
