@@ -13,7 +13,6 @@ import static jakarta.persistence.CascadeType.*;
 @Table(name = "menu_items")
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class MenuItem {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "menuitem_seq")
@@ -32,7 +31,7 @@ public class MenuItem {
             DETACH})
     private Restaurant restaurant;
 
-    @ManyToMany(cascade = {PERSIST, MERGE, REFRESH, DETACH})
+    @ManyToMany(cascade = ALL, mappedBy = "menuItems")
     private List<Cheque> cheques ;
 
     @ManyToOne(cascade = {PERSIST,MERGE,REFRESH,DETACH})

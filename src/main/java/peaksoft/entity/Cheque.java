@@ -31,7 +31,7 @@ public class Cheque {
     @ManyToOne(cascade = {PERSIST, MERGE, REFRESH,DETACH})
     private Employee employee;
 
-    @ManyToMany(mappedBy = "cheques", cascade = {PERSIST,MERGE,REFRESH,DETACH})
+    @ManyToMany( cascade = {PERSIST,MERGE,REFRESH,DETACH})
     private List<MenuItem> menuItems;
         public void  addMenu(MenuItem item){
             if (menuItems==null){

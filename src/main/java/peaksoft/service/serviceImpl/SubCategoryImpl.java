@@ -36,7 +36,7 @@ public class SubCategoryImpl implements SubCategoryService {
         if (repository.existsByName(request.name())){
             return SimpleResponse.builder().status(HttpStatus.CONFLICT).massage("Given name is already exists!").build();
         }
-        Category category = categoryRepository.findById(request.categoryId()).orElseThrow(() -> new NoSuchElementException("NOT FOUND.."));
+        Category category = categoryRepository.findById(request.categoryId()).orElseThrow(() -> new NotFoundException("Category NOT FOUND.."));
         SubCategory subCategory = new SubCategory();
         subCategory.setName(request.name());
         subCategory.setCategories(category);

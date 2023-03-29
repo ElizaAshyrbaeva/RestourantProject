@@ -56,13 +56,14 @@ public class ChequeServiceImpl implements ChequeService {
 
         Cheque cheque = new Cheque();
         cheque.setPriceAverage(count);
-        cheque.setCreateAt(LocalDate.now());
         cheque.setGrandTotal(count + total);
         cheque.setCreateAt(createdAt);
         cheque.setEmployee(employee);
-        cheque.setMenuItems(menuItems);
-        chequeRepository.save(cheque);
 
+        chequeRepository.save(cheque);
+        for (MenuItem menuItem : menuItems) {
+            cheque.addMenu(menuItem);
+        }
         return SimpleResponse.builder()
                 .status(HttpStatus.OK)
                 .massage("Cheque with id: " + cheque.getId() + " is saved!")

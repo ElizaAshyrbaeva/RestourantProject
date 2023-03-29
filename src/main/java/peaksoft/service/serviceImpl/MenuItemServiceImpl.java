@@ -112,24 +112,10 @@ public class MenuItemServiceImpl implements MenuItemService {
     @Override
     public List<MenuItemResponse> globalSearch(String word) {
         LocalDate date=LocalDate.now();
-//        if (word==null){
-//            for (StopList stopList : stopListRepository.findAll()) {
-//                if(stopList.getDate().equals(date)){
-//                    stopList.getMenuitem().setInStock(false);
-//                    stopListRepository.save(stopList);
-//                } else {
-//                    stopList.getMenuitem().setInStock(true);
-//                    stopListRepository.save(stopList);
-//                }
-//            }
-//            return menuItemRepository.getAllMenu();
-//        } else {
-//            return menuItemRepository.globalSearch(word);
         LocalDate currentDate = LocalDate.now();
         if (word == null) {
             stopListRepository.findAll().forEach(stop -> {
                 stop.getMenuitem().setInStock(!stop.getDate().equals(currentDate));
-                // TODO if date is current it's going to false
                 stopListRepository.save(stop);
             });
             return menuItemRepository.getAllMenu();
